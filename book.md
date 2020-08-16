@@ -60,7 +60,7 @@ You may find hints hilariously obvious, maybe even offending to read. That is go
 
 _Schei� Encoding_, some guy at my undergrad university had a shirt writing that. It translates to _working with encoding is mildly frustrating_. No objection, if you have every tried making software work on _Windows 9x_ while trying to put people all around the globe together &ndash; in front of your software.
 
-But then, what is beyond the mundane problems of language, time and location? Laws of thermodynamics and system equilibrium, and the human mind, of course.
+But then, what is beyond the mundane problems of language, time and location? Laws of thermodynamics, system equilibrium, information content, and the human mind, of course.
 
 ### Laws, Principles and Models
 
@@ -88,7 +88,7 @@ Let us start with time, since we never have enough of it and we cannot go back i
 * When you encounter UNIX timestamps, make sure sure you have more than 4 bytes of storage available to write them down. At some point in 2038, the number of seconds will not fit into the positive half of 4 bytes anymore. If you read this guide between 2020 and 2037 and face this problem, act! 2038 is close and maybe nobody else is going to rewrite your software any time soon.
 * Remember that February sometimes has 29 days &ndash; I say that because I had to fix that unawareness once already. Be aware that this is [not always in a cycle of 4 years](https://en.wikipedia.org/wiki/February_29).
 * Mind the [leap seconds](https://en.wikipedia.org/wiki/Leap_second#Insertion_of_leap_seconds). They are rare, but they disrupt your `0-59` assumption.
-* Be aware that [some calendars](https://linux.die.net/man/3/localtime) refer to months numerically by `0-11`, not `1-12`.
+* Be aware that [some calendars](https://linux.die.net/man/3/localtime) refer to months numerically by `0-11`, not `1-12` and that some libraries may be built on top of this mechanism.
 * Do not invent time formats, follow [ISO 8601 principles](https://en.wikipedia.org/wiki/ISO_8601#General_principles).
 * Time problems have been solved mostly since forever, heh, that's the good point. The more challenging one is that [some environments](https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html) use plenty of types for precision, relation, time zone affinity and backward compatibility. Familiarize yourself with what you need before picking `Date`, just because date.
 
@@ -96,10 +96,87 @@ Let us head over to the issue of textual representations:
 
 * Know what [Unicode](https://en.wikipedia.org/wiki/Unicode) is made for. Image Unicode being _the_ atlas of all the symbols, letters, emojis and runes of all actually used scripts of the world, even some archaeological ones, like some old nordic rune: ᛈ. This rune is located under position (decimal) 5832. At the time of writing, Unicode was standardized at version 13 in early 2020, comprising more than 143,000 symbols, including new emojis like 🩱 (if you see � instead, I tried to show you a _one-piece swimsuit_, to be found at no. 129649). On top, it is not only symbols: Unicode lists [control entities](https://en.wikipedia.org/wiki/Unicode_control_characters) as well that are supposed to aid in various cultural aspects.
 * Unicode is _not_ an encoding. [UTF-8](https://en.wikipedia.org/wiki/UTF-8#Description) is one example of an encoding to implement Unicode, and everything of it at once. Looking at the number of items in Unicode, you require at least three bytes per symbol to address anything from the atlas. Given that, historically, computer systems had less space than today and were centered on Latin languages, of which the English alphabet is composed of less than 128 symbols &ndash; including uppercase letters, downcase letters, digits, symbols &ndash; one byte was sufficient to even have some control bytes in the lower 128 items (see [ASCII](https://en.wikipedia.org/wiki/ASCII)), and to have some other Latin symbols in the upper 128 slots. Not all at once, but enough to put some things together, like [ISO-8859-1](https://en.wikipedia.org/wiki/ISO/IEC_8859-1) for German and Roman scripts, or [ISO-8859-5](https://en.wikipedia.org/wiki/ISO/IEC_8859-5) for Cyrillic scripts. Depending on the computer's settings, it will then display `Ø` or `и` for byte `0xD8`. For a North-American computer system, one byte per symbol is usually enough, but the user may occasionally visit a [CJK](https://en.wikipedia.org/wiki/CJK_characters) website. In order not to break compatibility to ASCII and to have some space saved, UTF-8 makes use of bit patterns per byte that allows scaling up the use of one to four bytes per symbol, depending on what is in use while also preventing ambiguity, that is why it needs four bytes for modern emojis, not just three.
-* There is also [UTF-16](https://de.wikipedia.org/wiki/UTF-16), requiring two to four bytes. It requires less magic to bit patterns but also requires more space. _Be careful_, there may be a byte-order marker in use at the beginning of the text. It tells you what of the two bytes is supposed to be the _lower_ one. Microsoft made Windows use UTF-16 for a very long time, requiring developers to constantly convert on touch points with UTF-8 data.
-* For [UTF-32](https://de.wikipedia.org/wiki/UTF-32), there are no reserved bits, since every element is using exactly four bytes, thus wasting a lot of space for `0x00`s in Latin languages.
+* There is also [UTF-16](https://de.wikipedia.org/wiki/UTF-16), requiring two to four bytes. It requires less magic to bit patterns but also requires more space. _Be careful_, there may be a byte-order marker of 2 bytes in use at the beginning of the text. It tells you which one of the two bytes is supposed to be the _lower_ one. Microsoft made Windows use UTF-16 for a very long time, requiring developers to constantly convert on touch points with UTF-8 data.
+* For [UTF-32](https://de.wikipedia.org/wiki/UTF-32), there are no reserved bits, since every element is using exactly four bytes, thus wasting a lot of space for `0x00`s in Latin languages, but simplifying all related string operations.
 * Make use of UTF-8 unless there is a very specific requirement.
 * Do not step back to codepage-based encodings, i. e. needing the correct interpretation context as mentioned above, unless there are even more constraints to work with.
 * Make sure to have all your tools configured correctly.
 * Make sure you know your technology stack well to know how strings are handled internally, of what kind of string types you actively need to [choose from](https://de.cppreference.com/w/cpp/string/basic_string). The wrong call of e.g. a _split_-method, or an index based access, will tear apart your valid bytes or will return the wrong element, usually causing severe trouble.
+* Know when to ask for bytes of a string, and when for characters (or _code-points_). Know what types there are available for bytes, individual characters and strings.
+* Know what operations may depend on the platform they are executed on. Influencing factors include [operating system environment variables](https://www.gnu.org/software/gettext/manual/html_node/Locale-Environment-Variables.html) or [runtime configuration](https://www.oracle.com/technical-resources/articles/javase/locale.html).
 * Depending on the culture you need to serve, obey that some languages write right-to-left (Semitic languages), or top-down (Mongolian) and may ask for a whole set of further considerations.
+* Some widely available library to spare yourself from ever converting bytes on your own is [libiconv](http://www.gnu.org/software/libiconv/). Higher level environments surely ship wrapper libraries or other utilities without further setup.
+
+### Primitive types
+
+Primitive types usually refer to what can be used straight by the processor, without going throguh runtime indirections first, such as _run-time type information_ (RTTI) or memory offsetting. A language may expose them as such &ndash; or at least pretend to so &ndash; (C, Java, Rust, Go), it may need some special workaround (Javascript _asm.js_ and _typed arrays_) or restricts the user to its boxing mechanisms (Ruby).
+
+* There are integer types, their bit patterns reflect the binary representation of some integer. They may be considered _signed_ or _unsigned_, sacrificing one bit in the first case. Depending on their size, they are referred to as 
+    * _bytes_ or _chars_ (1 byte), 
+    * _shorts_ or _words_ (2 bytes), 
+    * _ints_ or _double-words_ (4 bytes) and
+    * _longs_ or _quad-words_ (8 bytes).
+* If the language requires you to think about that, do so and pick what is available and appropriate, for every single occurrence. Do you need a sign? Do you need 8 byte integers when some other restriction renders everything beyond one byte into a waste of space? 
+* If primitive types are defined to have some soft constraints, such as _X is at least 4 bytes wide, depending on the target platform_, do stick to the fixed-sizes alternatives when available unless there is a very good reason not to do so (mostly: old compilers for very old platforms).
+* For counters, use the largest integer unless there is really no need to do so.
+* There may exist a _size_ type. It refers to an integer that with as many bytes as the target-platform uses for its memory addressing. On most modern desktop and server processors it is 64 bits (8 bytes), and some mobile and older processors its 32 bits. Size types are usually meant to be used in the context of contiguous memory span calculations.
+* When it comes to non-integer numbers, [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) is the de-facto standard on working with [real number approximations](https://en.wikipedia.org/wiki/Real_number). What? We are short of space and need a mechanism to somehow represent both the integer before the radix point, and the fractional part after. We cannot have large integers and an arbitrarily precise fraction at once, so smart people came up with a genius but also very unintuitive system that appears like magic. The most common references are _float_ or _single precision_ (4 byte) and _double precision_ (8 byte). You may also encounter _half precision_ (2 bytes) and _quadruple precision_ (16 bytes), but they are far less common and may not even be backed natively by the processor. So some things to know about floats:
+    * Values are mostly approximations. If they do not appear as such in the first moment, increase the output precision, some printing defaults discard the tail of the fractional value.
+    * They can represent much higher fraction-less integers than simple integers at the cost of losing some of the less significant positions.
+    * When close to zero, there is even more magic involved.
+    * There are reserved bit patterns, representing signed _infinity_ and _not a number_ (NaN).
+    * There are different rounding modes, but stay away from messing with them unless you are a professional in numerical analysis.
+
+  I really recommend to play around with an [IEEE 754 calculator](https://www.h-schmidt.net/FloatConverter/IEEE754.html) to just _get an idea_.
+* When operating with values of different types, like floats and integers, or even integers of different size or signs, rules apply with respect to type extensions, precision and results. Look for _implicit conversion_ or _promotion_ rules for your language, see the non-trivial rule set by example for [C](https://en.cppreference.com/w/c/language/conversion) or [Java](https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html).
+* If you have at least one user-controlled or user-influenced value in an arithmetic operation &ndash; and the nature of writing a software makes this quite the rule, not the exception &ndash;, let your alarm bells ring. There is a whole bunch of [security incident reports](http://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=Integer+Overflow) dedicated to this kind of problem. Common arithmetic pitfalls include the following:
+    * An addition or multiplication will overflow, possibly wrongly ending up in smaller value range, being accepted for the wrong reasons.
+    * A subtraction will underflow, with two unsigned values yielding a larger one as a result.
+    * A division by zero. Since this universally fails, you may have a problem when it did not or got swallowed unnoticedly because of improper exception handling.
+
+  There are [different approaches](https://en.wikipedia.org/wiki/Integer_overflow#Detection) of avoidance and handling these cases across, make sure you know the appropriate one.
+* If there is really a requirement to go beyond the value of range of the largest integers, you should look up _big number libraries_. They are often technically limited by the just the amount of memory available, at the cost of doing more operations in software, not being primitives any more.
+* Do not ever use floating point types for financial applications. Calculations on money regularly involve checking for thresholds, checking settlements. Looking at the details of IEEE 754 mentioned above, this is doomed to fail: Try to add the approximation of `0.1` to the approximation of `0.2`, end check whether it is equal to the hard-coded, or independently calculated, approximation of `0.3`. No, it may not, [try it out](http://weitz.de/ieee/). Two better ideas:
+    * The preferred one: use decimal types. Most of the higher level languages come shipped with such a type, as well as databases do. They use calculations at the base of 10 at tolerant scales. As an instance of _big number library_, it may experience a drawback in performance, but that reduces the risk of somebody getting ripped off moneywise, and probably illegally.
+    * The fallback solution, just that you have considered it: Calculate in milli-cents (or even more precise) using integers, and do what you did in middle school math to apply 15% VAT, or a 6% discount. [Integer division](https://en.wikipedia.org/wiki/Division_\(mathematics\)#Of_integers) is well defined and your friend, just mind the available space and obey the rules above.
+* There are calculation rules that appear the same analytically, but [not when done in floating point](https://gcc.gnu.org/wiki/FloatingPointMath) arithmetic. Doing it either way will sacrifice precision or performance. In a video game, you will probably pick the performance style or auto-optimization, for precise calculations the other one.
+* You must be aware that primitives are sometimes not ordered internally as they are supposed to be on a platform. When reading fixed-size values from file formats or network protocols, historical reasons lead to the order of bytes not matching the one of your platform, this the [endianess problem](https://en.wikipedia.org/wiki/Endianness). Most of the times, the host processor is subject to little endianness nowadays, with some exceptions being smaller or uncommon architectures.
+
+### The O thing
+
+In pre-COVID19 times, shaking hands was the etiquette in social gatherings. Now, let us think of some kind of party with the host having some kind of self-imposed shaking-hands policy. Now let us sum the number of hand-shakes of all participants individually, including the host:
+
+* He shakes hands with only the very first guest arriving. No matter how many others will come, the total number will remain _constant_ at 1.
+* He likes to spend more time with other activities that need more attention the more guests arrive, so after each handshake, he skips some people, and the number of skips doubles every time. The number of handshakes grows _logarithmically_ to the number of guests.
+* He patiently waits at the entrance and leaves out no single guest. So the number of handshake grows linearly to the number of guests, at factor 2.
+* On the arrival of a new guest, he better walks through the whole location again and greets everyone, as his memory is bad and he did not notice who exactly entered the door. We calculate `1 + 2 + 3 + 4 + ...`. With `N` guests in total, [this sum](https://en.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%E2%8B%AF) can be expressed as `N * (N + 1)` with factor `1/2`, a square of `N`. With this policy, in the end there will be a number _quadratically_ grown to the number of guests.
+* Every guest has a seat at some table, and sometimes the guest gets up to a walk for buffet and returns later. For each change at the table configuration, the host starts to shake hands with people at the table from the beginning, and over the day, every possible combination of seats being taken occurs at least once. Phew. That is what an _exponential_ growth of hand-shakes, depending of the number of guests, looks like.
+
+Now a plot twist: The party is more like a honey pot. The host set up the event to pick-pocket the guests. Now, the effectiveness of the plan improves over having more time to sneak around the guests, while the guests who feel unwelcome leave again soon. Saying hello to everyone as the host is the cheapest, non-speculative approach. The speculative approach is to hope for the guests to socialize so well to have everyone of them find another one to hang out with while trying to stay just at the half of required handshakes from the host's perspective. Make an A/B test out of that, maybe.
+
+This is what the Os tell you, very shortly spoken. [Big-O or Landau notation](https://en.wikipedia.org/wiki/Big_O_notation) come up with some more handy things to know:
+
+* Writing Os, usually constant offsets and factors are left out. They have a huge practical relevance but are not required for classifying the cost growing nature.
+* In a sum of components that contribute to the cost, often only the dominating one presented, e. g. `O(N^2 + N)` is to be seen as `O(N^2)`.
+* When there are more elements in involved, like a problem referring to `N` guests arriving in `M` cars, they may co-dominate the cost and the O looks like `O(M * N)` then.
+* There is more than just _the_ O. O means: your problem grows not more expensively than what is described inside; Θ (the same), Ω (more or equally expensive), ω (definitely more expensive), o (definitely less expensive). Most of the time, we are happy with an O and something giving an idea, without the need for academic precision.
+
+But there are other relevant considerations that sometimes require more than just a single O.
+
+Looking at our thievish party host, we change the pick-pocketing difficulty a bit: There is only one guest carrying a valuable thing. In the best case, the worst case, and the random case, how many guests does the thief need to _treat_ until finding what he is looking for?
+
+* Best case: The first one is a hit,  
+* Worst case: The last one of all the guests is a hit, so I takes `N` actions.
+* Random case: By the [law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers) (I'm sure I'm getting this wrong, I never got statistics much), the expected success is around of doing half of the guests &ndash; and this depends on `N` again.
+
+So finding our item is as expensive as `O(1)` in the best case, and `O(N)` for the average and worst. Practically, best cases can be seen as the base-line cost, something that you cannot beat this way. Average cost is the most common way to think of a problem, and worst-case cost is what calls Murphy if it does not match the average case.
+
+A nice thing about logarithmic operations is that they can be considered constant-with-an-offset, virtually. If you plot the curve of some `log_b(x)`, it looks like a flat, hovering line at some point, and that is nice.
+
+Quadratic operations often follow intuitive ideas on seemingly trivial tasks but also hit you hard after they are forgotten and eventually face some scale. Someone even made a [blog](https://accidentallyquadratic.tumblr.com/) of it collecting this kind of problem in the wild, and also providing better ideas sometimes.
+
+Say you have a set of 100 items, and you want to check whether all of them appear in another list of 100 items. Your pseudo-oneliner for this task: `list.matchAll(i -> biggerList.contains(i))`. Euh, 100 x 100 = 10_000 match operations in the worst case. Scale the numbers, boom: quadratic growth cost for the average and worst case. What if we sort them first, and then go through line by line in parallel? Good idea: Sorting is `O(N * log(N))` using [MergeSort](https://de.wikipedia.org/wiki/Mergesort), but we need that twice, so plug in the numbers: `2 * (100 * 7)` (rounding up the result of `log_2`), that is 1400 match operations only! Now, take the sorted lists and go through them item by item to find a match: tiny little 200 operations more of them in the worst case.
+
+Do not start to sort all the things all the time now, this may kill all gains again, instead, also think of the right data structures to use.
+
+###  Data structures
