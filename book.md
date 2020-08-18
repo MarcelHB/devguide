@@ -89,6 +89,8 @@ Let us start with time, since we never have enough of it and we cannot go back i
 * Remember that February sometimes has 29 days &ndash; I say that because I had to fix that unawareness once already. Be aware that this is [not always in a cycle of 4 years](https://en.wikipedia.org/wiki/February_29).
 * Mind the [leap seconds](https://en.wikipedia.org/wiki/Leap_second#Insertion_of_leap_seconds). They are rare, but they disrupt your `0-59` assumption.
 * Be aware that [some calendars](https://linux.die.net/man/3/localtime) refer to months numerically by `0-11`, not `1-12` and that some libraries may be built on top of this mechanism.
+* Remember that some cultures have a different convention of the first day of a week, like Sunday vs. Monday.
+* The last week of the year mostly is shared by two different years.
 * Do not invent time formats, follow [ISO 8601 principles](https://en.wikipedia.org/wiki/ISO_8601#General_principles).
 * Time problems have been solved mostly since forever, heh, that's the good point. The more challenging one is that [some environments](https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html) use plenty of types for precision, relation, time zone affinity and backward compatibility. Familiarize yourself with what you need before picking `Date`, just because date.
 
@@ -129,7 +131,7 @@ Primitive types usually refer to what can be used straight by the processor, wit
 
   I really recommend to play around with an [IEEE 754 calculator](https://www.h-schmidt.net/FloatConverter/IEEE754.html) to just _get an idea_.
 * When operating with values of different types, like floats and integers, or even integers of different size or signs, rules apply with respect to type extensions, precision and results. Look for _implicit conversion_ or _promotion_ rules for your language, see the non-trivial rule set by example for [C](https://en.cppreference.com/w/c/language/conversion) or [Java](https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html).
-* If you have at least one user-controlled or user-influenced value in an arithmetic operation &ndash; and the nature of writing a software makes this quite the rule, not the exception &ndash;, let your alarm bells ring. There is a whole bunch of [security incident reports](http://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=Integer+Overflow) dedicated to this kind of problem. Common arithmetic pitfalls include the following:
+* If you have at least one user-controlled or user-influenced value in an arithmetic operation &ndash; and the nature of writing a software makes this quite the rule, not the exception &ndash;, let your alarm bells ring. There is a whole bunch of [security incident reports](http://cve.mitre.org/cgi-bin/cvekey.cgi?keyword=Integer+Overflow) dedicated to this kind of problem, and also the blockchainists have been [repeatedly hit hard](https://blockchain-projects.readthedocs.io/overflow.html) by overly smart contracts, there is even a [good list](https://github.com/ethereum/solidity/issues/796#issuecomment-253578925) of vulnerable code to look for. Common arithmetic pitfalls include the following:
     * An addition or multiplication will overflow, possibly wrongly ending up in smaller value range, being accepted for the wrong reasons.
     * A subtraction will underflow, with two unsigned values yielding a larger one as a result.
     * A division by zero. Since this universally fails, you may have a problem when it did not or got swallowed unnoticedly because of improper exception handling.
@@ -148,7 +150,7 @@ In pre-COVID19 times, shaking hands was the etiquette in social gatherings. Now,
 
 * He shakes hands with only the very first guest arriving. No matter how many others will come, the total number will remain _constant_ at 1.
 * He likes to spend more time with other activities that need more attention the more guests arrive, so after each handshake, he skips some people, and the number of skips doubles every time. The number of handshakes grows _logarithmically_ to the number of guests.
-* He patiently waits at the entrance and leaves out no single guest. So the number of handshake grows linearly to the number of guests, at factor 2.
+* He patiently waits at the entrance and leaves out no single guest. So the number of handshake grows _linearly_ to the number of guests.
 * On the arrival of a new guest, he better walks through the whole location again and greets everyone, as his memory is bad and he did not notice who exactly entered the door. We calculate `1 + 2 + 3 + 4 + ...`. With `N` guests in total, [this sum](https://en.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%E2%8B%AF) can be expressed as `N * (N + 1)` with factor `1/2`, a square of `N`. With this policy, in the end there will be a number _quadratically_ grown to the number of guests.
 * Every guest has a seat at some table, and sometimes the guest gets up to a walk for buffet and returns later. For each change at the table configuration, the host starts to shake hands with people at the table from the beginning, and over the day, every possible combination of seats being taken occurs at least once. Phew. That is what an _exponential_ growth of hand-shakes, depending of the number of guests, looks like.
 
