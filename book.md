@@ -161,8 +161,7 @@ This is what the Os tell you, very shortly spoken. [Big-O or Landau notation](ht
 * Writing Os, usually constant offsets and factors are left out. They have a huge practical relevance but are not required for classifying the cost growing nature.
 * In a sum of components that contribute to the cost, often only the dominating one presented, e. g. `O(N^2 + N)` is to be seen as `O(N^2)`.
 * When there are more elements in involved, like a problem referring to `N` guests arriving in `M` cars, they may co-dominate the cost and the O looks like `O(M * N)` then.
-* There is more than just _the_ O. O means: your problem grows not more expensively than what is described inside; Θ (the same), Ω (more or equally expensive), ω (definitely more expensive), o (definitely less expensive). Most of the time, we are happy with an O and something giving an idea, without the need for academic precision.
-
+* There is more than just _the_ O. O means: your problem grows not more expensively than what is described inside; Θ (the same), Ω (more or equally expensive), ω (definitely more expensive), o (definitely less expensive). Most of the time, we are happy with an O and something giving an idea, without the need for academic precision.  
 But there are other relevant considerations that sometimes require more than just a single O.
 
 Looking at our thievish party host, we change the pick-pocketing difficulty a bit: There is only one guest carrying a valuable thing. In the best case, the worst case, and the random case, how many guests does the thief need to _treat_ until finding what he is looking for?
@@ -182,3 +181,22 @@ Say you have a set of 100 items, and you want to check whether all of them appea
 Do not start to sort all the things all the time now, this may kill all gains again, instead, also think of the right data structures to use.
 
 ###  Data structures
+
+Data structures are our air to breathe, but using the fanciest ones out there may do no good without some technical awareness. Some general rules for working with data:
+
+* Asking for memory costs, not so much by the amount you ask for (that may simply fail), but the number of times. Depending on the level that your environment works on, you have a more or less deterministic view of what actually happens. In the lower levels, you ask your operating system for a memory allocation (`malloc`) of some size, and you better release that when no longer needed. Libraries or higher level runtimes hide that in various degrees, probably doing at least one large initial allocation, or by over-allocating a bit in advance. Requesting and releasing memory via the operation system usually invokes a _mode switch_ and a search for a sufficiently large memory chunk. Details vary by the actual allocator in use. In short: The less you need to do, the better.
+* Copying memory costs. Copying data is not free, the processor needs to read one cell and write the bytes into another one, over and over again until all your bytes are copied. While you may not be aware of ongoing copying, working with certain data structures will do more than what is good, and you need to know these cases.
+* If you can model a problem into working with a fixed amount of memory size, like streaming fixed-sized chunks of data, involving just one allocation &ndash; or maybe even none at all &ndash; do it like this. Application-side memory concerns have then reduced to `O(1)` overhead here, congratulations.
+* Whenever you know the amount of bytes you need, or the number of your typed items, make the data structure initialize with that information. Chances are good to avoid a huge overhead footprint while using.
+* Never let a user value go unchecked into the amount of items or bytes you need. In the easy case, reject anything beyond some limit, or otherwise consider a remodeling of the problem into some streaming pattern (continue reading to the later sections).
+* Try to think about some statistics, or gather them at some later point in use:
+    * Quantity: How many items do I have to face for my case?
+
+      Data that is bound by some internal frame will probably not justify the same attention as user inputs that may be arbitrarily many or large.
+    * Access: Is the structure built up once, and then just being read? Is it constantly changing, or maybe just a few times?
+
+      A read-only structure allows some optimizations, an ever-changing one requires considerations.
+    * Position: Do we talk about use on a _hot path_?
+
+      Does the pressure justify sacrificing convenience over performance? A dynamic, key-based lookup is nice and flexible but a static, index-based one saves more time, and hard-wired accesses even more.
+  
