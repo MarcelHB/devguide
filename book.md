@@ -1,5 +1,7 @@
 # The Generic Guide for Software Developers
 
+This guide is subject to the [Creative Commons License v4.0 BY, unported](https://creativecommons.org/licenses/by/4.0/).
+
 ## Preface 
 
 ### We, the people
@@ -241,7 +243,25 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
     * [Apache License v2.0](https://choosealicense.com/licenses/apache-2.0/): Grants a permissive use while requesting copyright notices and outline of changes to the source code. Grants patent use, but not warranties and liabilities.
     * [Mozilla Public License v2.0](https://choosealicense.com/licenses/mpl-2.0/): Grants a permissive use while requesting a file-based copyleft, i. e. disclosing changes to source code files that are subject to MPL. Grants patent use, but not warranties and liabilities.
     * _Public domain_ &ndash; Publicly floating software, or so. A difficult topic since there is such thing in some jurisdictions. It is probably OK if the author(s) explicit state a public domain release or an equivalent one, but if there is no such credible statement, consider it taboo. A better alternative for software is the [CC0](https://choosealicense.com/licenses/cc0-1.0/) or [WTFPL](https://choosealicense.com/licenses/wtfpl/) for addressing the possible lack of _public domain_ regulations in an internationally acceptable way.
-    * Everything else: There are lots of less common ones, so read the available texts or comments, at least. For any custom ones, well, read through or ask your legal staff about compatibility.
-* Generally assume that the use of trademarks and patents is generally not granted unless explicitly stated. So do not use them until then.
+    * Everything else: There are lots of less common ones, so read the available texts or comments, at least. For any custom ones, well, read through.
+* Generally assume that the use of trademarks and patents is not granted unless explicitly stated. So do not use them until then.
+* For asset licenses, there are also some to know about &ndash; since you as a software engineer will also choose an icon or data set, or presentation banner from time to time:
+    * [Creative Commons Licenses](https://creativecommons.org/) (CC) &ndash; An organization that helps artists of all kind to pick a well-defined license with global acceptance for their work. There are some identifiers that easily allow you what fits:
+        * _BY_: mention the author(s)
+        * _SA_: _share alike_, modifications are legal only when subject to the same conditions of the CC license
+        * _NC_: not allowed to be used in commercial contexts
+        * _ND_: do not modify
+    * [GNU FDL](https://www.gnu.org/licenses/#FDL): The concept of a copyleft in the context of books and documentation. The old default of Wikipedia articles.
+    * [Open Database License](https://opendatacommons.org/licenses/odbl/1-0/): Think of CC-BY-SA for collections of data.
+    * _Fair use_: The concept of fair use is known to some countries such as the US. It allows a fairly limited use of some otherwise protected work but you should not assume a right to claim _fair use_ under general conditions, and outside of these countries.
 * If you are generally interested in picking an open source model for you, let tools help you guiding through, for [software](https://creativecommons.org/choose/) and for [assets](https://choosealicense.com/non-software/) ([CC](https://creativecommons.org/choose/)).
-*  Consider using [SPDX headers](https://spdx.github.io/spdx-spec/appendix-V-using-SPDX-short-identifiers-in-source-files/) in your source code when making it available. This allows simplified identification and parsing while also saving a lot of copyright-related comments to be found in the header otherwise.
+* Mention your license situation in some well-known locations like the Readme, a package meta-data file, and the whole texts and 3rd parties in well-known files to look for, such as a `LICENSE`, `COPYING` file or around an _About ..._ section.
+* Consider using [SPDX headers](https://spdx.github.io/spdx-spec/appendix-V-using-SPDX-short-identifiers-in-source-files/) in your source code when making it available. This allows simplified identification and parsing while also saving a lot of copyright-related comments to be found in the header otherwise.
+* Depending on the view, the most interesting, or most painful aspect, is what commercial legal texts looks like. Well, we cannot generalize, it may be individual agreements and general terms of services and end-user license agreements (EULA). But depending on your background, this can be Pandora's box when facing to work with such:
+   * Something on-premise is bound to natural persons by name, with no option of transfer.
+   * Something on-premise is bound to serial numbers of hardware.
+   * Something on-premise makes you pay for the number of CPUs, or CPU cores that you like to use.
+   * You may not have the permission to take unauthorized screenshots, or [publish benchmarks](https://www.brentozar.com/archive/2018/05/the-dewitt-clause-why-you-rarely-see-database-benchmarks/).
+   * Its obedience is enforced by all kinds of digital rights management (DRM) tools.
+   * It is OK when you have something running on your personal computer, but [it is bad when it enters the guest Wifi of a corporation](https://www.linkedin.com/pulse/being-radicalized-oracle-license-drone-martin-zetterlund).
+   * ... (insert the absurdest things to think of that actually drive people towards OSS as far as they need to do serious work) ...
