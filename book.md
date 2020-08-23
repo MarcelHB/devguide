@@ -194,7 +194,7 @@ Data structures are our air to breathe, but using the fanciest ones out there ma
 * Asking for memory costs, not so much by the amount you ask for (that may simply fail), but the number of times. Depending on the level that your environment works on, you have a more or less deterministic view of what actually happens. In the lower levels, you ask your operating system for a memory allocation (`malloc`) of some size, and you better release that when no longer needed. Libraries or higher level runtimes hide that in various degrees, probably doing at least one large initial allocation, or by over-allocating a bit in advance. Requesting and releasing memory via the operation system usually invokes a _mode switch_ and a search for a sufficiently large memory chunk. Details vary by the actual allocator in use. In short: The less you need to do, the better.
 * Copying memory costs. Copying data is not free, the processor needs to read one cell and write the bytes into another one, over and over again until all your bytes are copied. While you may not be aware of ongoing copying, working with certain data structures will do more than what is good, and you need to know these cases. When you hear of a new _zero-copy_ feature somewhere, be excited.
 * If you can model a problem into working with a fixed amount of memory size easily, like streaming fixed-sized chunks of data, involving just one allocation &ndash; or maybe even none at all &ndash; do it like this. Application-side memory concerns have then reduced to `O(1)` overhead here, congratulations.
-* Whenever you know the amount of bytes you need, or the number of your typed items, make the data structure initialize with that information. Chances are good to avoid a huge overhead footprint while using.
+* Whenever you know the amount of bytes you need, or the number of your typed items, make the data structure initialize with that information (_capacity_). Chances are good to avoid a huge overhead footprint while using.
 * Never let a user value go unchecked into the amount of items or bytes you need. In the easy case, reject anything beyond some limit, or consider a remodeling of the problem into some streaming pattern (continue reading to the later sections). Otherwise somebody will happily borrow some gigabytes from you.
 * Try to think about some statistics, or gather them at some later point in use:
     * Quantity: How many items do I have to face for my case?
@@ -208,14 +208,77 @@ Data structures are our air to breathe, but using the fanciest ones out there ma
       Does the pressure justify sacrificing convenience over performance? A dynamic, key-based lookup is nice and flexible but a static, index-based one saves more time, and hard-wired accesses even more.
 * [Principle of locality](https://en.wikipedia.org/wiki/Locality_of_reference): If you need data together and fast, make it neighbours. This holds true for both a single computer as well as network architectures. The more related data fits into the different layers of a CPU (core) cache at once, the less cache-misses occur on subsequent uses, reducing the overall wait time for data to be loaded from main memory. It may also reduce the risk for intra-process paging towards a comparably slow hard disk. Thinking of an unoptimized, ordinary network, the constant need to ask for data from _far away_ involves round trip times of milliseconds and bandwidths that are lower than what your disk controller offers.
   
-Now, let us look at some data structures, actually:
+These are fundamentals when thinking of data structures and computer memory for most of the known data structures being an instance of either one, or allowing to be built on top of both of them, depending on the constraints:
 
-* Some languages put a strong focus on a narrow set of dynamic data structures or remarkable features, such as lists in Lisp-and-family and Haskell, or immutable data structures in Clojure. Look around what your language of choice advocates &ndash; maybe it leaves you little choice.
+* _Contiguous memory_: One item is supposed to be located right after the previous one, physically. There may be a disinction between static arrays, the ones that have a fixed size at compile time, and dynamic arrays (also _vectors_) that can shrink and grow. Actually, this may not be case: If the subsequent memory is reserved already, moving the memory is required first, so requesting a new memory location and moving the items. While its read and write access is constant, growing size modifications should be kept low or made upfront. Best suits: index based read and write accesses on largely stable sizes. Consider a deletion of items inbetween as unsetting of items, as it may otherwise lead to more expensive contraction operations.
+* _Lists_: For every item, there is an address attached stating where to find the next item, or none when being the last one. Memory locations are scattered, and the whole struct requires additional memory _per item_. The good thing: a list never needs to be moved as a whole since we can just break it up and change a successor's address. Other than that, most other operations are `O(n)` at worst case since an operation around some index `i` needs `i` jumps around the memory (the last one is cached sometimes) to get there first. Best suits: A need for insertion and deletion operations at arbitrary positions. If you can model a use case using a dynamic array, always follow that approach instead.
+
+So always know what types or classes of your language represent the following data structures (spare yourself from searching them in C, there you are on your own):
+
+* _Stack_: How to push, how to pop items from the top.
+* _Unordered Map_: Also _hash_ or _hash map_. How to associate keys to values under a constant lookup costs. Can a deterministic iteration order be achived anyway?
+* _Ordered Map_: How to associate keys to values under stable insertion costs.
+* _Set_: How to make sure to have a collection of unique items. When not available, consider a map while ignoring the values. Is there a way to have a multi-set?
+* _First-in-first-out queue_: How to enqueue, how to dequeue items.
+* _Custom queue_: How to enqueue, how to dequeue items, how to specify a queue criteria. What is the backing data structure?
+
+Some further remarks on working with data structures:
+* Know the difference when a _map_ or _dictionary_ &ndash; everything that requires a _dynamic_ lookup in general &ndash; is better using a tree or a hash-based backend. Trees are stable with respect to their average vs. worst case costs (not _trees_ in general, but the ones used in practice, like _self-balancing trees_) but hashes usually outperform at read-intensive tasks. Yet, there is no such thing as free beer, and so there are traps, and they need a [consideration or two](https://www.data-structures-in-practice.com/hash-tables/).
+* Do not blindly transfer data structures into domains. For very common problems, people came up with good setups or specialized data structures (like graphs, sparse matrices, mutable strings), so never skip some research first.
+* Some languages put a strong focus on a narrow set of dynamic data structures or remarkable features, such as lists in Lisp-and-family and Haskell, or immutable data structures in Clojure. Look around what your language of choice advocates &ndash; maybe it leaves you little choice or keeps its internals occluded.
+* If you have a hard-coded, static data array with a need of dynamic lookups, think of a way to meaningfully sort it at the time of writing. It not only makes resolution easier when merging conflicting changes, it may qualify for [binary search](https://en.wikipedia.org/wiki/Binary_search_algorithm) lookups without asking for additional costs for setup at runtime.
+* When working with multiple, concurrent modifiers on an instance of a data structure, an easy approach to prevent corruption is locking. Sometimes, environments already ship _synchronized_ data structures or even _lock free_ structures (like queues, since they matter a lot in such a scenario). Make use of them for both saving code, and maybe even benefiting from increased performance.
 * If you feel that managing your application's _local_ data gets out of hand by data dimension, look up techniques, update patterns, lack of flexibility and persistence questions, consider [SQLite](https://www.sqlite.org/index.html), it does [not even need](https://www.sqlite.org/inmemorydb.html) a file on a disk and is also available on mobile operating systems. When working inside of a browser, _WebSQL_ is currently a restricted option among [some other ones](https://www.html5rocks.com/en/features/storage).
+
+### Algorithms
+
+Technically, every program is an instance of an _algorithm_, and even the ones that acquired a publicly known name fill books and books for all kinds of topics when it comes to writing them as code. Anyway, there are a bunch of helpful essentials to know:
+
+* Keep the invariant calculations out of the loops, always. If some calculation does not depend on the iteration turn, put it outside. In `for (var i = 0; i < asMuchAsWeNeed(); ...)`, `asMuchAsWeNeed()` is evaluated right before re-entering the loop, so if it is invariant, just ask for it once.
+* Compile your static regular expressions upfront, as they are invariant. A regular expression usually encodes code you don't see. The implementation is creating a state machine, and sometimes even hardware-accelerated code. If you do this over and over, you probably got yourself a handbrake in your code.
+* Very close to optimization, but if a language supports [compile-time calculations](https://en.wikipedia.org/wiki/Compile_time_function_execution), think of what you can put there while just having code. Think of _runtime invariant_ aspects.
+* Be aware how to properly use intra-process locks, both _shared_ and _exclusive_ ones, and how do synchronization and semaphores. More granularity means less blocking and thus more performance, but usually comes at the cost of more code and higher risk for dead locks when doing an error here.
+* Do not parse or validate any non-trivial user input by regular expressions, make use of grammars and validate. Regular expressions become hard to read for humans at some point (see [email addresses](https://emailregex.com/)), and start to get flawed both semantically and technically &ndash; this is where grammars come into play. [Programming languages](https://www.nongnu.org/hcb/) specify them, [SQL does](https://sqlite.org/lang_select.html), so why not your input as well?
+* The difference between [MergeSort](https://en.wikipedia.org/wiki/Merge_sort) and [QuickSort](https://en.wikipedia.org/wiki/Quicksort) matters. One is stable in costs and maintaining the relative order of equal items but requires more space, the other one is complementary to that.
+* The pipeline of [map and reduce](https://en.wikipedia.org/wiki/MapReduce) is also a useful mental modeling tool for disassembling an approach into many smaller steps that can be implemented at different scales easily.
+* If you can model your problem as a [graph](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)), there is probably a simple, sound and stable-cost solution for [the most obvious kinds of question](https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/) you like to answer. Also: A tree can be seen as a graph.
+* A graph can be seen as a [matrix](https://en.wikipedia.org/wiki/Adjacency_matrix).
+* When calculating with arrays (vectors) and multi-dimensional arrays (matrices), refrain from implementing high school math on your own. There are libraries that help you doing so even better and numerically safer while exploiting hardware-accelerated SIMD concepts. It is even such a big topic that major CPU vendors provide such libraries working best on their platform ([Intel](https://software.intel.com/content/www/us/en/develop/tools/math-kernel-library.html), [AMD](https://developer.amd.com/amd-aocl/), [Apple](https://developer.apple.com/documentation/accelerate)), of course. But this is optimization, help yourself with generic ones first (best research keyword: _LAPACK_ + your language).
+
+### Doing X is hard
+
+For reasons of NIH, underestimation, skipping research or lack of awareness, people sometimes tend to solve problems on their own when they better should not. Even with being smart in algorithms and data, reality sometimes hits hard and makes you question the time you spend on certain topics. What we have recognized already:
+
+* Doing dates and calendars and times is hard,
+* Doing encoding and languages is hard,
+* Doing email addresses is hard and
+* Doing math is hard, and not by what people go through at school.
+
+A list of other real-world examples that look somewhat easy at a first glance, but are not:
+
+* Doing CSV is [hard](http://thomasburette.com/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/) 
+* Doing JSON is [hard](http://seriot.ch/parsing_json.php)
+* Doing HTTP cookies is [hard](https://tools.ietf.org/html/rfc2109) and got [harder](https://tools.ietf.org/html/rfc6265) (with updates pending)
+
+For reasons of compatibility, performance and security &ndash; this cannot be stressed enough &ndash; always look for established solutions first. I had considered _doing XML is hard_ to be obvious for all my developer life, but even that did not stop a surprising amount of people from considering and even trying it on their own &ndash; and not as a private side-project.
+
+## Inputs and outputs
+
+## Security
+
+## Databases
+
+## Modeling
+
+## Testing
+
+## The Project
+
+## The Running Project
 
 ## Legals and Lawfuls
 
-Laws and legal aspects touch everyone, everywhere. When being employed, every employee will likely get a training in applicable laws and compliance rules in every mid-sized company. Yet the software engineer quickly turns into the technician to overview the technical implementation details of software with respect to legal requirements. For example, the EU _General Data Protection Regulation_ (GDPR) contains articles like _personal data must be protected technically by up-to-date best-practices_. Guess who is closest to know what _up-to-date best-practices_ actually means, especially if there is no dedicated sofware security crew available. Here is a list of legal topics that every software engineer should have heard of:
+Laws and legal aspects touch everyone, everywhere. When being employed, every employee will likely get a training in applicable laws and compliance rules in every mid-sized company. Yet the software engineer quickly turns into the technician to overview the technical implementation details of software with respect to legal requirements. For example, the EU _General Data Protection Regulation_ (GDPR) contains articles like _personal data must be protected technically by up-to-date best-practices_. Guess who is closest to know what _up-to-date best-practices_ actually means, especially if there is no dedicated software security crew available. Here is a list of legal topics that every software engineer should have heard of:
 
 ### Laws
 
@@ -231,7 +294,7 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
 
 * When you encounter a 3rd party software without a clear license, consider it taboo. Just because it is found on GitHub, it doesn't mean you can simply make any use of it.
 * When contributing to an open source software project while at work, even a minor bugfix, and it requires the contribution to be subject to a certain license for being accepted, make sure you got an OK by your employer first.
-* At an early point, ask your employer what libraries and programs are actively being shippd to the world, what is exclusively part of internal services and tools. Ask for license policies, like cleared and [banned ones](https://opensource.google/docs/using/agpl-policy/). If nobody has a clue what you actually want by that, you probably got yourself a new job: A client or compliance person will eventually have questions.
+* At an early point, ask your employer what libraries and programs are actively being shipped to the world, what is exclusively part of internal services and tools. Ask for license policies, like cleared and [banned ones](https://opensource.google/docs/using/agpl-policy/). If nobody has a clue what you actually want by that, you probably got yourself a new job: A client or compliance person will eventually have questions.
 * If there are specialized people in your organization for contracts, laws and licenses, it may be the best &ndash; or only &ndash; option to get a clearance from them per license type or individual software. But this should not stop you from reading this section at all.
 * Open source software matters, and so do the license models. [Have some statistics](https://resources.whitesourcesoftware.com/blog-whitesource/top-open-source-licenses-trends-and-predictions) and [some synposis](https://choosealicense.com/appendix/). 
 * Know the distinction between licenses that cover software (for its dual form of source and binary state, warranties, liabilities, patents) and _asset licenses_ that addresses non-software creative work, data and documentation.
@@ -246,13 +309,13 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
     * Everything else: There are lots of less common ones, so read the available texts or comments, at least. For any custom ones, well, read through.
 * Generally assume that the use of trademarks and patents is not granted unless explicitly stated. So do not use them until then.
 * For asset licenses, there are also some to know about &ndash; since you as a software engineer will also choose an icon or data set, or presentation banner from time to time:
-    * [Creative Commons Licenses](https://creativecommons.org/) (CC) &ndash; An organization that helps artists of all kind to pick a well-defined license with global acceptance for their work. There are some identifiers that easily allow you what fits:
+    * [Creative Commons Licenses](https://creativecommons.org/) (CC) &ndash; An organization that helps artists of all kind to pick a well-defined license with global acceptance for their work, also used by Wikipedia. There are some identifiers that easily allow you what fits:
         * _BY_: mention the author(s)
         * _SA_: _share alike_, modifications are legal only when subject to the same conditions of the CC license
         * _NC_: not allowed to be used in commercial contexts
         * _ND_: do not modify
     * [GNU FDL](https://www.gnu.org/licenses/#FDL): The concept of a copyleft in the context of books and documentation. The old default of Wikipedia articles.
-    * [Open Database License](https://opendatacommons.org/licenses/odbl/1-0/): Think of CC-BY-SA for collections of data.
+    * [Open Database License](https://opendatacommons.org/licenses/odbl/1-0/): Think of CC-BY-SA for collections of data, like _OpenStreetMap_ does.
     * _Fair use_: The concept of fair use is known to some countries such as the US. It allows a fairly limited use of some otherwise protected work but you should not assume a right to claim _fair use_ under general conditions, and outside of these countries.
 * If you are generally interested in picking an open source model for you, let tools help you guiding through, for [software](https://creativecommons.org/choose/) and for [assets](https://choosealicense.com/non-software/) ([CC](https://creativecommons.org/choose/)).
 * Mention your license situation in some well-known locations like the Readme, a package meta-data file, and the whole texts and 3rd parties in well-known files to look for, such as a `LICENSE`, `COPYING` file or around an _About ..._ section.
