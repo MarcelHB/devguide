@@ -100,6 +100,7 @@ Let us start with time, since we never have enough of it and we cannot go back i
 * The last week of the year mostly is shared by two different years.
 * Do not invent time formats, follow [ISO 8601 principles](https://en.wikipedia.org/wiki/ISO_8601#General_principles).
 * Time problems have been solved mostly since forever, heh, that's the good point. The more challenging one is that [some environments](https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html) use plenty of types for precision, relation, time zone affinity and backward compatibility. Familiarize yourself with what you need before picking `Date`, just because date.
+* As a side note, setting the system's time-zone explicitly may be a [good idea anyway](https://blog.packagecloud.io/eng/2017/02/21/set-environment-variable-save-thousands-of-system-calls/).
 
 Let us head over to the issue of textual representations:
 
@@ -262,7 +263,32 @@ A list of other real-world examples that look somewhat easy at a first glance, b
 
 For reasons of compatibility, performance and security &ndash; this cannot be stressed enough &ndash; always look for established solutions first. I had considered _doing XML is hard_ to be obvious for all my developer life, but even that did not stop a surprising amount of people from considering and even trying it on their own &ndash; and not as a private side-project.
 
-## Inputs and outputs
+## Inputs, outputs and throughputs
+
+Without input and output operations, there was only little practical software. These operations often depend on devices that are magnitude slower in throughput and latency than CPU caches and memory. Doing such operations without some consideration will easily make your software wait, for a significant amount of its runtime.
+
+* Similar to memory allocation requests, the less you need to do I/O operations, the better for performance. Even if we assume a comparably fast device, such as an M.2 SSD, look at an [interesting visualization](https://www.thomas-krenn.com/en/wiki/Linux_Storage_Stack_Diagram) of the I/O stack on Linux, for example.
+* Always buffer your read operations when doing lots of small reads, a buffer size usually is equivalent to a file system page size, and that usually is 4096 bytes wide.
+* Buffer your write operations by the same amount in the analogous case unless you need atomic operations. Do not forget to explicitly flush the buffer, otherwise data may indefintely hang in memory.
+* When having a wild random access pattern without a need for appending to files, consider _memory-mapped I/O_ for its enormous potential of speeding up read and write operations. Again, because of _no free beer_ it comes at the cost of limited portability (but every platform has its API for this), and some need for caution in large files or [network storage](https://news.ycombinator.com/item?id=19806349).
+* For reasons, never forget to set the binary (or `"b"`) flag when opening files. If the software ever touches Windows ground, not having this set on data that is not strictly human text to be displayed, it will implicity convert bytes related to line-endings.
+* For reasons of convenience in times that nobody remembers, there are _readers_ in some environments that use implicit, i. e. system-dependent encoding when reading files. Stay away from them or always specifiy encodings explicitly (e.g. binary, UTF-8), as they are not portable otherwise.
+* For doing I/O operations, there is sometimes a bunch of (system-dependent) types you can choose from: Synchronous (POSIX, mostly default), asynchronous (POSIX AIO, Node.JS) or batch/vector operations. Stick to the defaults of your environment unless you can identify needs for other patterns, and especially do not mix them uncautiously.
+* When touching lots of files all the time, there is [room for tuning](https://opensource.com/article/20/6/linux-noatime) on some platforms: Not touching the `atime` attribute.
+* In fact, I/O operations become a bottleneck so easily that I strongly recommend to have profiling tools at hand to identify the ratio of I/O waiting when looking for reasons of slowness around file operations.
+* Have a timeout whereever you do not want to wait forever, and also think of a proper handling when elapsed. Socket-based I/O often suffers from hanging indefinitely, blocking allocations, when done improperly in exceptional circumstances. Sometimes, foreign code has biting default settings. Do a proper research first, especially when talking to endpoints outside of your domain.
+* Close all the handles when done, and mind the exceptions or error cases. They usually represent operating system allocations that are otherwise exhausted eventually while the process continues running.
+
+### Streaming
+
+Data on disks is easily larger than what fits into RAM. And since there is usually more than one process working on a host, constraints are not getting any easier. These are examples of tasks you will encounter at large:
+
+* Reading a full set of records from a database into memory.
+* Parsing the whole XML file into a DOM representation.
+* Reading the whole file without checking its size first.
+* Reading the whole data from a network connection to parse it in a 2nd step.
+
+Some languages have tools that make it fairly easy to fall for these cases, the punishment they await: _out of memory_.
 
 ## Security
 
