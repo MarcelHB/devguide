@@ -288,7 +288,17 @@ Data on disks is easily larger than what fits into RAM. And since there is usual
 * Reading the whole file without checking its size first.
 * Reading the whole data from a network connection to parse it in a 2nd step.
 
-Some languages have tools that make it fairly easy to fall for these cases, the punishment they await: _out of memory_.
+Some languages have tools that make it fairly easy to fall for these cases, the punishment they await: _out of memory_. It is not an optimization and I would not even call it a pattern anymore but a sheer necessity: _streaming_. It is not primarily about performance but about keeping the required amount of resources constant while facing virtually any kind of worklooad, and it starts by tasks as simple as reading data from a file which can be as big as the file system allows it to be.
+
+While reading from and writing to I/O devices usually are first-class streaming citizen of any serious environment, your product requirements may ask for more thinking or sophistication, maybe even rethinking your view of the problem &ndash; like streaming between local views of something larger and using hierarchies of resolution. But the general rules include:
+
+* Have a fixed number of allocation calls.
+* Have a fixed size of memory to be used for buffering between reading from a source and writing into the next sink.
+* Reuse allocations, even if your environment includes a Garbage Collector.
+* Know your libraries and how they support streaming.
+* Reality is often disappointing when facing closed source software and remote services, so maybe consider secondary solutions as well.
+
+When done well, memory problems will disappear forever &ndash; locally, of course.
 
 ## Security
 
