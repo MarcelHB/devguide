@@ -277,7 +277,8 @@ Without input and output operations, there was only little practical software. T
 * When touching lots of files all the time, there is [room for tuning](https://opensource.com/article/20/6/linux-noatime) on some platforms: Not touching the `atime` attribute.
 * In fact, I/O operations become a bottleneck so easily that I strongly recommend to have profiling tools at hand to identify the ratio of I/O waiting when looking for reasons of slowness around file operations.
 * Have a timeout whereever you do not want to wait forever, and also think of a proper handling when elapsed. Socket-based I/O often suffers from hanging indefinitely, blocking allocations, when done improperly in exceptional circumstances. Sometimes, foreign code has biting default settings. Do a proper research first, especially when talking to endpoints outside of your domain.
-* Close all the handles when done, and mind the exceptions or error cases. They usually represent operating system allocations that are otherwise exhausted eventually while the process continues running.
+* Remember: the slower the I/O channel, the bigger the advantage of a CPU compressing and decompressing data. This is [why we use compression](https://www.pingdom.com/blog/can-gzip-compression-really-improve-web-performance/) in HTTP servers, also for dynamic responses.
+* Close all the handles when done, and mind the exceptions or error cases. Handles usually represent operating system allocations that are otherwise exhausted eventually while the process continues running.
 
 ### Streaming
 
@@ -290,7 +291,7 @@ Data on disks is easily larger than what fits into RAM. And since there is usual
 
 Some languages have tools that make it fairly easy to fall for these cases, the punishment they await: _out of memory_. It is not an optimization and I would not even call it a pattern anymore but a sheer necessity: _streaming_. It is not primarily about performance but about keeping the required amount of resources constant while facing virtually any kind of worklooad, and it starts by tasks as simple as reading data from a file which can be as big as the file system allows it to be.
 
-While reading from and writing to I/O devices usually are first-class streaming citizen of any serious environment, your product requirements may ask for more thinking or sophistication, maybe even rethinking your view of the problem &ndash; like streaming between local views of something larger and using hierarchies of resolution. But the general rules include:
+While reading from and writing to I/O channels usually are first-class streaming citizen of any serious environment, your product requirements may ask for more thinking or sophistication, maybe even rethinking your view of the problem &ndash; like streaming between local views of something larger and using hierarchies of resolution. But the general rules include:
 
 * Have a fixed number of allocation calls.
 * Have a fixed size of memory to be used for buffering between reading from a source and writing into the next sink.
@@ -301,6 +302,36 @@ While reading from and writing to I/O devices usually are first-class streaming 
 When done well, memory problems will disappear forever &ndash; locally, of course.
 
 ## Security
+
+* Rule #1: _All input is evil_. Some DNA sequencer device engineers probably never considered malcrafted DNA sequences remotely to be an actual threat to their software. Well, [they were wrong](https://www.schneier.com/blog/archives/2017/08/hacking_a_gene_.html), and so will you.
+* Rule #2: _Do not invent or implement cryptography yourself_. Leave that to mathematicians and cryptographers, like _Daniel J. Bernstein_ or the inventors of _AES_, just to name some of the very few.
+* Rule #3: _Security by obsecurity is taboo_. If somebody argues that reveleaing its security mechanisms is a security risk, it _is_, so go away.
+
+Ok, people have come up with more formal concepts and established resources on IT security than this list.
+
+* The [CIA principle](https://en.wikipedia.org/wiki/Information_security#Key_concepts) &ndash;
+    * _Confidentiality_: Nobody can read who is not supposed to read it.
+    * _Integerity_: Nobody can temper a message unnoticedly.
+    * _Availablility_: Do not be disruptible.
+    * _Non-repudiation_: Prevent false or ambiguous impersonation of participants.
+* [OWASP Top-10](https://owasp.org/www-project-top-ten/): A list of common security violation types in the domain of websites.
+* [ISO/IEC 27002](https://www.iso.org/obp/ui/#iso:std:iso-iec:27002:ed-2:v1:en) (excerpt): Probably everything you need to formally know about IT security.
+* [CVE](https://cve.mitre.org/cve/search_cve_list.html) (Common Vulnerabilities and Exposures): A database to refer to disclosed security incidents by some _CVE number_. It is one such database among others (_security advisory databases_) but it is likely the most common one to use when looking for vulnerabilities in IT products.
+
+There are many concepts a software engineer needs to know when remotly touching topics subject to security.
+
+* _Cryptographic hash functions_: While a _hash function_ maps data into a fixed range of values, _cryptographic hash functions_ do the same while matching some security requirements:
+  * There is no known way to produce collisions, and finding some is infeasibly expensive by brute force.
+  * There is no known way to infer its input just by looking at some hashed value.
+  * Depending on the context in use
+      * they are fast to also work on large data, often backed by hardware implementations, for example [SHA](https://en.wikipedia.org/wiki/Intel_SHA_extensions),
+      * they are deliberatly slow to make brute force approaches take even longer, e. g. to slow down guessing of passwords. _bcrypt_ is an example of such a hash function.
+* _Salting_: Imagine two or more users using the same password. If an attacker obtains password (e. g. by social engineering), the attacker can identify all the other users just by looking at their identical hash values. _Salting_ the input by some unique or sufficiently random input makes this kind of weakness difficult again. Look at [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) for an implementation example.
+* _Message Authentication Code_ (MAC): How to make sure that something has not been modified illegally? One easy and common approach includes _hashed MACs_ (HMAC), i. e. `hmac(message + secret)`. The secret needs to be known to all authorized parties, of course. Make sure not to use ordinary cryptographic hash functions but only its HMAC-derivatives, for example `HMAC_SHA256`, this is imperative ([details](https://security.stackexchange.com/questions/79577/whats-the-difference-between-hmac-sha256key-data-and-sha256key-data)).
+* _Symmetric cryptography_: The _same key_ is used for both encryption and decryption. Examples include _AES_ or _Twofish_.
+* _Asymmetric cryptography_ or _public key crypthography_: There is one key to be used for encryption (or verifying) &ndash; also known as _public key_, and another one for decryption (or signing), the _private key_. The keys are coupled mathematically by requirements similar to cryptograhpic hash functions, and as the names suggest, one is supposed to be shared and other is to be kept secret _at all times and under all conditions_. Mathematical concepts behind this include _integer factorization_, _discrete logarithms_ and _elliptic curves_. Known implementations of different feature sets include _RSA_ or _ECDH_. If the private key is leaked, everything related must be considered compromised.
+* _Signatures_: First: Do not set _digital signatures_ equivalent to _signatures_ as you use to confirm an intent with legal binding by writing something at the of a letter; the only commonality is the aspect of _there is something at the end of the message_. The digital signature is an output of a procedure taking the input and the _private key_, and that can be matched by using the corresponding _public key_, i. e. verified. This way, we know that the holder of the private key of the given public key has _signed_ the data. This signature is _free_ of semantics, it can indicate authorship, ownership, authorization, integrity &ndash; look at the use case.
+* _Certificates_: How do we know that a given public key truly belongs to the one who claims it? Like _I'm truly your bank's online portal now_. Because you really know that other party and got the public key in a way that is subject to little risk of tampering. Or because somebody we trust for doing proper identity checks in a hopefully clean environment tells us: _yup_. A certificate is a signature of a trusted entity over somebody's public key. And mostly, there are middlemen who need to be trusted, who need to be trusted ... and eventually, your operating system or browser ships a bunch of _root certificates_ that are accepted to be at the top of the _chain of trust_. In the real world, things go wrong of course. So if some _certificate authority_ (the middlemen or root-men) make a mistake, this usually results in some kind of _security fallout_ scenario, as everyone affected of the chain suddenly needs to act fast. Read stories of [DigiNotar](https://en.wikipedia.org/wiki/DigiNotar) or [Symantec](https://security.googleblog.com/2015/10/sustaining-digital-certificate-security.html). Google has [undergone approaches](http://www.certificate-transparency.org/) to spot illegally issued certificates, and there are [mechanism](https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol) to structurally publish revocations of compromised keys.
 
 ## Databases
 
