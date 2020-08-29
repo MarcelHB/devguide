@@ -237,7 +237,7 @@ Technically, every program is an instance of an _algorithm_, and even the ones t
 
 * Keep the invariant calculations out of the loops, always. If some calculation does not depend on the iteration turn, put it outside. In `for (var i = 0; i < asMuchAsWeNeed(); ...)`, `asMuchAsWeNeed()` is evaluated right before re-entering the loop, so if it is invariant, just ask for it once.
 * Compile your static regular expressions upfront, as they are invariant. A regular expression usually encodes code you don't see. The implementation is creating a state machine, and sometimes even hardware-accelerated code. If you do this over and over, you probably got yourself a handbrake in your code.
-* Very close to optimization, but if a language supports [compile-time calculations](https://en.wikipedia.org/wiki/Compile_time_function_execution), think of what you can put there while just having code. Think of _runtime invariant_ aspects.
+* Very close to optimization, but if a language supports [compile-time calculations](https://en.wikipedia.org/wiki/Compile_time_function_execution) (examples include C++, up-to-date Rust), think of what you can put there while just having code. Think of _runtime invariant_ aspects.
 * Be aware how to properly use intra-process locks, both _shared_ and _exclusive_ ones, and how do synchronization and semaphores. More granularity means less blocking and thus more performance, but usually comes at the cost of more code and higher risk for dead locks when doing an error here.
 * Do not parse or validate any non-trivial user input by regular expressions, make use of grammars and validate. Regular expressions become hard to read for humans at some point (see [email addresses](https://emailregex.com/)), and start to get flawed both semantically and technically &ndash; this is where grammars come into play. [Programming languages](https://www.nongnu.org/hcb/) specify them, [SQL does](https://sqlite.org/lang_select.html), so why not your input as well?
 * The difference between [MergeSort](https://en.wikipedia.org/wiki/Merge_sort) and [QuickSort](https://en.wikipedia.org/wiki/Quicksort) matters. One is stable in costs and maintaining the relative order of equal items but requires more space, the other one is complementary to that.
@@ -318,7 +318,7 @@ Ok, people have come up with more formal concepts and established resources on I
 * [ISO/IEC 27002](https://www.iso.org/obp/ui/#iso:std:iso-iec:27002:ed-2:v1:en) (excerpt): Probably everything you need to formally know about IT security.
 * [CVE](https://cve.mitre.org/cve/search_cve_list.html) (Common Vulnerabilities and Exposures): A database to refer to disclosed security incidents by some _CVE number_. It is one such database among others (_security advisory databases_) but it is likely the most common one to use when looking for vulnerabilities in IT products.
 
-There are many concepts a software engineer needs to know when remotly touching topics subject to security.
+There are many concepts a software engineer needs to know when remotly touching topics subject to security:
 
 * _Cryptographic hash functions_: While a _hash function_ maps data into a fixed range of values, _cryptographic hash functions_ do the same while matching some security requirements:
   * There is no known way to produce collisions, and finding some is infeasibly expensive by brute force.
@@ -327,11 +327,54 @@ There are many concepts a software engineer needs to know when remotly touching 
       * they are fast to also work on large data, often backed by hardware implementations, for example [SHA](https://en.wikipedia.org/wiki/Intel_SHA_extensions),
       * they are deliberatly slow to make brute force approaches take even longer, e. g. to slow down guessing of passwords. _bcrypt_ is an example of such a hash function.
 * _Salting_: Imagine two or more users using the same password. If an attacker obtains password (e. g. by social engineering), the attacker can identify all the other users just by looking at their identical hash values. _Salting_ the input by some unique or sufficiently random input makes this kind of weakness difficult again. Look at [bcrypt](https://en.wikipedia.org/wiki/Bcrypt) for an implementation example.
-* _Message Authentication Code_ (MAC): How to make sure that something has not been modified illegally? One easy and common approach includes _hashed MACs_ (HMAC), i. e. `hmac(message + secret)`. The secret needs to be known to all authorized parties, of course. Make sure not to use ordinary cryptographic hash functions but only its HMAC-derivatives, for example `HMAC_SHA256`, this is imperative ([details](https://security.stackexchange.com/questions/79577/whats-the-difference-between-hmac-sha256key-data-and-sha256key-data)).
-* _Symmetric cryptography_: The _same key_ is used for both encryption and decryption. Examples include _AES_ or _Twofish_.
+* _Message Authentication Code_ (MAC): How to make sure that something has not been modified illegally? One easy and common approach includes _hashed MACs_ (HMAC), i. e. `hmac(message + secret)`. The secret needs to be known to all authorized parties, of course. Make sure not to use ordinary cryptographic hash functions but only its HMAC-derivative where requried, for example `HMAC_SHA256`, this is imperative ([details](https://security.stackexchange.com/questions/79577/whats-the-difference-between-hmac-sha256key-data-and-sha256key-data)).
+* _Symmetric cryptography_: The _same key_ is used for both encryption and decryption. Examples include _AES_ or _Twofish_. AES is [widely hardware-accelerated](https://en.wikipedia.org/wiki/AES_instruction_set) nowadays.
 * _Asymmetric cryptography_ or _public key crypthography_: There is one key to be used for encryption (or verifying) &ndash; also known as _public key_, and another one for decryption (or signing), the _private key_. The keys are coupled mathematically by requirements similar to cryptograhpic hash functions, and as the names suggest, one is supposed to be shared and other is to be kept secret _at all times and under all conditions_. Mathematical concepts behind this include _integer factorization_, _discrete logarithms_ and _elliptic curves_. Known implementations of different feature sets include _RSA_ or _ECDH_. If the private key is leaked, everything related must be considered compromised.
 * _Signatures_: First: Do not set _digital signatures_ equivalent to _signatures_ as you use to confirm an intent with legal binding by writing something at the of a letter; the only commonality is the aspect of _there is something at the end of the message_. The digital signature is an output of a procedure taking the input and the _private key_, and that can be matched by using the corresponding _public key_, i. e. verified. This way, we know that the holder of the private key of the given public key has _signed_ the data. This signature is _free_ of semantics, it can indicate authorship, ownership, authorization, integrity &ndash; look at the use case.
 * _Certificates_: How do we know that a given public key truly belongs to the one who claims it? Like _I'm truly your bank's online portal now_. Because you really know that other party and got the public key in a way that is subject to little risk of tampering. Or because somebody we trust for doing proper identity checks in a hopefully clean environment tells us: _yup_. A certificate is a signature of a trusted entity over somebody's public key. And mostly, there are middlemen who need to be trusted, who need to be trusted ... and eventually, your operating system or browser ships a bunch of _root certificates_ that are accepted to be at the top of the _chain of trust_. In the real world, things go wrong of course. So if some _certificate authority_ (the middlemen or root-men) make a mistake, this usually results in some kind of _security fallout_ scenario, as everyone affected of the chain suddenly needs to act fast. Read stories of [DigiNotar](https://en.wikipedia.org/wiki/DigiNotar) or [Symantec](https://security.googleblog.com/2015/10/sustaining-digital-certificate-security.html). Google has [undergone approaches](http://www.certificate-transparency.org/) to spot illegally issued certificates, and there are [mechanism](https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol) to structurally publish revocations of compromised keys.
+* _Random number generators_: When _inventing_ keys, computers rely on random number generators. It is actually quite hard to think of a way to create randomness on a computer by just having plain old chips on it. There are plenty of ways that _look_ like randomness but [are actually deterministic](http://www.jbox.dk/sanos/source/lib/stdlib.c.html) (look for `rand` in there), given some seed value. And what do we use as seed? A constant, some timestamp of now? By reverse engineering or looking at the source code, an attacker could obtain a series of random values, try to find the correct seed for their replay, and predict the next ones, for example when used for secrecy for upcoming users. Operating systems try to gain entropy, and over time, lots of non-deterministic events take place to update its RNG state (like I/O operations, sensor values), but what if we need that early, very early after boot? [It may wait until entropy](https://wiki.debian.org/BoottimeEntropyStarvation). Systems that really depend on randomness for security are mostly equipped with hardware RNGs &ndash; and they may rely on radioactivity. Read a story of [Debian](https://freedom-to-tinker.com/2013/09/20/software-transparency-debian-openssl-bug/) that once failed to set up its RNG in a security system.
+
+For reasons, asymmetric encryption is slow. Symmetric encryption and hashing, in contrast, are fast &ndash; see their hardware acceleration above. So real life examples combine almost everything above, see a short summary of HTTPS with [TLS v1.2](https://tls.ulfheim.net/):
+
+1. Client and server exchange some meta data and _inventend_ random data on first encountering of each other.
+1. Server presents a certificate for its public key to be verified by the client: _Integrity OK? Domain matches? Not expired? Not revoked? Signature chain leads to known root CA?_ ...
+1. Client and server _invent_ ephemeral public/private-key pairs (server one's is signed, public key of the certificate to be used for verification), exchange their public keys.
+1. Given the own private key, the other parties' public key and the random data at the beginning, both sides can now calculate a symmetric key to use for the payload using hash functions.
+1. The payload is transmitted using symmetric keys.
+
+Also signing involves notable actions:
+
+1. The payload to sign is being hashed by a cryptographically secure hash function.
+1. The resulting hash is being signed by the signer's private key.
+1. The viewer calculates the hash value, and tests whether the public key, when applied to the signature, results in that hash value.
+
+If someone was able to create a payload with a hash collision, the signature would still be correct!
+
+* So when designing certain security related processes, stick to the established ones:
+    * Communication: use TLS v1.2, implemented by libraries such as _GnuTLS, OpenSSL, Microsoft SChannel_
+    * (A)symmetric data encryption, signatures: [choose](https://en.wikipedia.org/wiki/Comparison_of_cryptography_libraries) from a fitting library or consult your environment's manual
+    * Hashing: _SHA256_
+    * Gashing of passwords: _bcrypt_
+    * Randomness: look what library supports _pseudorandom number generators_
+* Keep an eye on what cryptography got into press for being cracked, flawed or considered too weak for near-future hardware. [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0) and [WEP](https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Weak_security) broke many, many years ago already. MD5 and SHA1 hashes are [considered weak](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms). And [MD4 is an example](https://en.wikipedia.org/wiki/MD4#MD4_collision_example) of a broken hash mechanism.
+* You may, of course, use weaker hash functions or RNGs (such as `Math.random` in JavaScript, or `rand` in C) but do not when security and money are at stake.
+
+Let us do not forget _all input is evil_:
+
+* Whitelists are more secure than blacklists.
+* Escape right at application time: This takes away all the questions and bad assumptions of _has it been sanitized already?_ Make sure you always do and right before it matters. And to prevent bad and ugly multi-escaping: just there.
+* User input [always ends up somewhere](https://samcurry.net/cracking-my-windshield-and-earning-10000-on-the-tesla-bug-bounty-program/), but the most common cases to strictly apply escaping are (and there are libraries for that!):
+    * rendering it within HTML (XSS attack),
+    * putting it into SQL statements (injection attack),
+    * creating regular expressions from it (denial of service attack, see below),
+    * using it in shell arguments (injection attack),
+    * using it in file names and paths (directory traversal and [denial of service](https://tldp.org/HOWTO/Secure-Programs-HOWTO/file-names.html) attack).
+* Regular expressions are the first choice of input validation for many cases. That is OK, but do not forget to properly address upcase and downcase, start and end of string, single and global application, EOL handling and encoding. Poor bugs have resulted from failures here.
+* _Fuzzing tests_ are your best friend when trying to stress your counter-measures.
+* Inserting an emoji icon is the second best test to check your input handling.
+* Both the application of poorly-written regular expressions as well as input-based ones can take your system down, as it [did at Cloudflare once](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). Be sure not to write ping-ponging greedy matchers following each other. Again, consider a grammar over regular expressions also for security concerns.
+
+As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern.
 
 ## Databases
 
