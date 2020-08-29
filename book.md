@@ -368,13 +368,31 @@ Let us do not forget _all input is evil_:
     * putting it into SQL statements (injection attack),
     * creating regular expressions from it (denial of service attack, see below),
     * using it in shell arguments (injection attack),
+    * using it in the evaluation of interpreted languages (injection attack),
     * using it in file names and paths (directory traversal and [denial of service](https://tldp.org/HOWTO/Secure-Programs-HOWTO/file-names.html) attack).
 * Regular expressions are the first choice of input validation for many cases. That is OK, but do not forget to properly address upcase and downcase, start and end of string, single and global application, EOL handling and encoding. Poor bugs have resulted from failures here.
 * _Fuzzing tests_ are your best friend when trying to stress your counter-measures.
 * Inserting an emoji icon is the second best test to check your input handling.
 * Both the application of poorly-written regular expressions as well as input-based ones can take your system down, as it [did at Cloudflare once](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). Be sure not to write ping-ponging greedy matchers following each other. Again, consider a grammar over regular expressions also for security concerns.
+* Do not use C at the front line unless you really, really know how to do right. Microsoft estimates security vulnerabilities caused by improper use of memory to have a [share of about 70%](https://github.com/Microsoft/MSRC-Security-Research/blob/master/presentations/2019_02_BlueHatIL/2019_01%20-%20BlueHatIL%20-%20Trends%2C%20challenge%2C%20and%20shifts%20in%20software%20vulnerability%20mitigation.pdf) of all vulnerabilities listed in CVE. And it is probably not only because of so many newcomers to C. It is still technically possible to do this kind of bad &ndash; in a more or less easy way &ndash; in other languages as well (C++, Rust).
 
-As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern.
+Aside from injection attacks or DoS attacks, there are other kinds of attacks you should generally be aware of:
+
+* _Side-channel attacks_: Does guessing pieces of a secret lead to differences in the response time, the power consumption? Is there any kind of leftover afterwards, like cache contents? Intel had this kind of bug [in hardware in recent years](https://meltdownattack.com/), other CPU manufacturers probably as well. It also holds for software, like algorithms terminating early or late, depending how much of the input is guessed correctly. Even comparing an input hash with a stored password hash (again, use something like _bcyrpt_ here!) naively &ndash; byte per byte until the end or the first difference &ndash; may beat blind brute-force attacks, [even over a noisy channel](https://www.blackhat.com/docs/us-15/materials/us-15-Morgan-Web-Timing-Attacks-Made-Practical-wp.pdf) like the internet!
+* _Enumeration attacks_: Allowing somebody to systematically obtain data, secrets and statistics by just counting. Think of counting new users per day over some URL containing an incrementing ID, or obtaining rebate codes or digital vouchers by just increasing the code number by one.
+* _Filter attacks_: While statistics is supposed to abstract the individual data contribution, generously allowing setting of filters may reduce the sample size to a degree that you can infer data ththat you were supposed to protect.
+* _Human factor_: The most frustrating part. Default passwords, shared passwords, bad passwords, written-down passwords, update fatigue, bad configurations, ignorance, gullibility, bribery. There is a whole discipline of _threat modeling_, going beyond the world of software.
+
+For the human factor, there is a wide range of solutions of differenct convenience and cost. Embrace the _Principle of Least Privilege_ (POLP) all around your software. Funnily, there is not much difference between a human user and a deployed process when it comes to security factors:
+
+1. If something is not your task, restrict to what is yours. There is authentication, permissions, a whitelist of actions (even system calls towards the OS).
+1. If something is your task now, it is no longer after you are done. Make your actors ask for a temporarily federated set of permission for the time they need it, protected by a second authentication factor. This way, higher privilege tokens do not stay alive for too long, or indefinetely.
+1. Even if it is your task, it must not be carried out by somebody else. An injection attack will happily make it look like yours from a system setup perspective.
+1. Something can go rogue, simply for bad use or configuration.
+
+So even if you fully trust somebody, there is a stack of threats involved that do not care for your mutual trust. Limiting the potential damage, the _blast radius_ must be done regardless. The range of implementations of protection is too large to mention them here, so I strongly recommend to obtain designated literature.
+
+As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to externally provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern.
 
 ## Databases
 
@@ -418,6 +436,7 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
     * _Public domain_ &ndash; Publicly floating software, or so. A difficult topic since there is such thing in some jurisdictions. It is probably OK if the author(s) explicit state a public domain release or an equivalent one, but if there is no such credible statement, consider it taboo. A better alternative for software is the [CC0](https://choosealicense.com/licenses/cc0-1.0/) or [WTFPL](https://choosealicense.com/licenses/wtfpl/) for addressing the possible lack of _public domain_ regulations in an internationally acceptable way.
     * Everything else: There are lots of less common ones, so read the available texts or comments, at least. For any custom ones, well, read through.
 * Generally assume that the use of trademarks and patents is not granted unless explicitly stated. So do not use them until then.
+* _Software patents_ generally have a hard time around the world. It is more likely to face restrictive copyright agreements or coupling of trademark use granting for advertising.
 * For asset licenses, there are also some to know about &ndash; since you as a software engineer will also choose an icon or data set, or presentation banner from time to time:
     * [Creative Commons Licenses](https://creativecommons.org/) (CC) &ndash; An organization that helps artists of all kind to pick a well-defined license with global acceptance for their work, also used by Wikipedia. There are some identifiers that easily allow you what fits:
         * _BY_: mention the author(s)
