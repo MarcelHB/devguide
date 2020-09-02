@@ -396,6 +396,32 @@ As a closing word: Consider every topic before and after this one as a subject t
 
 ## Databases
 
+They are omnipresent, or what a friend once said: _Damn, you always end up with a database._ Whether it be you transactional ground, your large scale analytics, or just maintaining some local meta data, why write this on your own if there is probably a convenient solution available already?
+
+But really know what kind of databases fits your needs _generally best_. While _data is data_ often allows multiple ways to store and query, a bad choice comes with drawbacks in terms of scalability, managability and tooling, connectors, or simply because of KISS.
+
+Most software that labels itself as database-related falls into the range between the following two concepts:
+
+* [ACID](https://en.wikipedia.org/wiki/ACID#Characteristics) &ndash; a strong focus on safety:
+    * _Atomicity_: Operations are _all or nothing_, nothing results in a state of half-way done.
+    * _Consistency_: No operation violates contraints, and nothing ever slips through. Any attempts will be rejected.
+    * _Isolation_: To some (configurable) degree, two concurrent operations do or do not mutually interfere with their changes.
+    * _Durability_: Once an operation has been confirmed, its effects have manifested. Unless all your disks get nuked, it is visible even after an immediate shutdown.
+
+  One or multiple operations in conjunction that meet all the ACID criteria are known as _transaction_.
+* [BASE](https://en.wikipedia.org/wiki/Eventual_consistency) &ndash; A concept that just states: _Eventually, your operation's effects will reach full visibility_. Until then, the old state may return. And if there are two conflicting updates floating around for convergence, a resolution strategy is required.
+* [CAP](https://www.ibm.com/cloud/learn/cap-theorem), since we are about to list uppercase database theorems &ndash; When having a distributed setup of database nodes, you may choose _just two_ of the following three properties:
+    * _Consistency_: All nodes exhibit the same state.
+    * _Availability_: The cluster is fully available.
+    * _Partition tolerance_: The lines between the nodes can be cut so that the cluster divide into partitions.
+
+  This is fun to think about by going through every combination: When promising consistency, no node must lose update connectivity (C+A), or otherwise I have to close the service while waiting for it (C+P). In another scenario, if somebody gets cut off, the node simply goes out of synchronization (A+P).
+
+For everything that is not content by ephemeral, local state representations, we usually skew towards ACID satisfaction. So when in doubt, go ACID. Depending on the requirements, various databases make different promises with respect to properties of ACID. I strongly recommend to browse some [in-depth analyses by Jepsen](https://jepsen.io/analyses) on such promises, and how to get them cracked in some cases.
+
+
+
+
 ## Modeling
 
 ## Testing
