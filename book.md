@@ -417,10 +417,52 @@ Most software that labels itself as database-related falls into the range betwee
 
   This is fun to think about by going through every combination: When promising consistency, no node must lose update connectivity (C+A), or otherwise I have to close the service while waiting for it (C+P). In another scenario, if somebody gets cut off, the node simply goes out of synchronization (A+P).
 
-For everything that is not content by ephemeral, local state representations, we usually skew towards ACID satisfaction. So when in doubt, go ACID. Depending on the requirements, various databases make different promises with respect to properties of ACID. I strongly recommend to browse some [in-depth analyses by Jepsen](https://jepsen.io/analyses) on such promises, and how to get them cracked in some cases.
+For everything that is not content by ephemeral, local state representations, we usually skew towards ACID satisfaction. So when in doubt, go ACID. Depending on the requirements, various databases make different promises with respect to properties of ACID. I strongly recommend to browse some [in-depth analyses by Jepsen](https://jepsen.io/analyses) on such promises, and how to get them cracked in some cases. Not sure if [this hillarious sticker](https://pbs.twimg.com/media/CWhO2jIUYAAbuiK.png) is related ...
 
+That only answered how our database treats data operations. Let us summarize what is out there in order to save and query data:
 
+* _Relational databases_ &ndash; Good old entity-relation (ER) model persistence with hard-wired relations and typed fields. A (mostly) uniform set of instances of an entity, normally to be seen as a table per entity, with one row representing an instance. Chances are good we operate by SQL here.
+* _Graph databases_ &ndash; In contrast to ER, graph databases focus on instances, or _nodes_, &ndash; typed or tagged ones &ndash; and their individual relation among each other, the _edges_: _You (node) know (edge) me (node) since 2020 (edge property), but I do not know you (so unidirectional edge) but I visited (edge) Canada (node) in 2004 (edge property), so you know somebody who once visited Canada no earlier than 2004 (transitional edge to Canada)._ A lot of nodes and edges can actually be modeled as entities and relations, yet graph databases provide queries that vastly simplify working with a dynamic degrees of node-hops and relation directions. Imagine modeling ER and writing SQL for _Show me every known person to me that visited Canada after me and who also knows somebody directly who once visited the US_ &ndash; sounds edgy, huh? _Neo4j_ is a nice and widely-used example of a graph database.
+* _Key-value databases_ &ndash; Nothing as simple as putting something somewhere giving it a name, well.
+    * _Hash-based ones_: You use a key, and you better do not lose it. They are fast because of hashing, and anything but the whole key will not get you anywhere fast. Keys may be stored secondarily in plaintext as well. Famoues candidates include _Redis_ or _Memcached_.
+    * _Lexical ones_: The keys are stored lexically, mostly as you would read byte sequences from left to right in the same way as (some of) you did in the telephone book by alphabet. This allows reading by key prefixes, or scan ranges as well. _HBase_ works like that.
+    * _Hierarchical ones_: Imagine folders and files as in a file system, using paths. Unlike lexical KV stores, there is an intrinsic hierarchy in a way that you must know some parent's path to query all its children, and their path as a key to some value. Examples include _etcd_ or _ZooKeeper_.
+* _Document-based databases_ &ndash; In contrast to KV databases, these databases are not agnostic towards their values, the _documents_. In contrast to relational databases, they are usually less strict with respect to schemas, i. e. allowing documents to look different while operating over all of them at the same time. This often comes at the cost of sacrificing features that conventiently work on relations between instances. Examples include _ElasticSearch_, _MongoDB_ or _CouchDB_.
+* _Time-series databases_ &ndash; A database with a strong focus on appending or logging instances over the axis of time, physically representing data associated to some timestamp. There are often retention policies and features including downsampling for compressing older data. Thus it makes this kind of database the first choice for a steady flow of events to be caputured, for a wide range of purposes (including monitoring and alerting, logging and billing). Open source examples include _InfluxDB_ and _Prometheus_.
 
+Representatives of these classes often come with core and side features of related aspects (geo-spatial data, full-text search, analytics), and some systems promote themselves as _multi-model database_ (_ArrangoDB_, _Oracle database_).
+
+Among these, databases may have a flavor, or should be configured to primarily serve one purpose:
+
+* _Transactional_, or _OLTP_ &ndash; While not strictly referring to transactions as above, it refers to _writing to it_. If there are frequent changes taking place, both in schema and data, databases organize their persistance for flexibility and safety: updates to keyed values, introduction of new columns, deletions of instances, logs.
+* _Analytical_, or _OLAP_ &ndash; When configured to serve the need to do analytics, like creating reports and doing data mining, databases will organize data for being fast under segmented aggregations, while being inserted or updated mostly by large batch operations, in a less frequent manner. A _column-based_ database will densely store one field of many instances, followed by the next block or field. If we had a _row-based_ (so OLTP) setup, we had to wait for much I/O striding time (on spinning disks) between fetching one particular value from every individual row. In a column-based setup, this data can be streamed contiguously, and calculated under constant operations.
+
+While all these _NoSQL_ databases are difficult to generalize &ndash; again, I recommend to individually check the Jepsen analyses mentioned at the beginning of this chapter &ndash; there is hell to get straight on SQL, i. e. the relational ones. Before all, the [rules of normalization](https://en.wikipedia.org/wiki/Database_normalization#Normal_forms), because everything that has not been designed that way is doomed to fail at light speed. I never thought to see violations at large scale in production for reasons of common sense, yet here I am:
+
+* _1NF_ &ndash; Never compact data that is relevant for _relational_ purposes in the same column, have it atomic: Not a string of seperated IDs, _just one ID_. Storing a JSON string is OK if it could have been an opaque, binary large object (BLOB) instead, from the perspective of the relation.
+* _2NF_ &ndash; Do not manage more than one logical, related entities inside of the same table as if they were subject to an inner join. Split them up.
+* _3NF_ &ndash; Do not have stuff lying around in a table that does not contribute information to the primary key but something else. Put it away.
+* _BCNF_ &ndash; There is one superkey, i. e. a minimal set of values that defines the rest of the row. If there is no such combination, it smells like your table lacks some relevant information.
+* _4NF_ &ndash; If you have two 1:n relations, let us say `A -> B` and `A -> C`, do not have them stored in one table by columns `A, B, C`. Split them up.
+* _5NF_ &ndash; You have taken the overall decomposition of tables to the maximum extent possible.
+* One rule always implies all preceding ones.
+* There are more rules, but the ones missing here are not part of the classic set of rules.
+
+A _surrogate key_ is a key that takes away a lof of burden of finding or constructing unique identifiers out of your data. There are reasons _to always have one_:
+
+* It is managed by the database at no additional application logic &ndash; except from being configured in the DDL.
+* It is decoupled from your business data, thus immutable.
+* No headaches with respect to being used as a foreign key somewhere. No need for cascades, no need for schema changes because of multi-column keys, simple to be used for extension at any time.
+* It is the easiest way to externally address one row.
+* Given that it usually is a sequence number, you can use modulo operations as one simple fallback for partitioning the data.
+* You should even consider the use of a surrogate key for tables that were simply meant as a cross relation table, given the reasons above.
+
+Reasons to optionally have some secondary, unique, immutable and atomic key for public use instead of the surrogate key (like a UUID):
+
+* It prevents enumeration attacks.
+* It remains publicly stable even under migration or arcane desaster recovery strategies.
+* A primary key may be implemented by a tree exclusively (PostgreSQL), whereas a secondary key may be configured to be subject to a hash.
+* It is still easily addressable and can be backed by the underlying database by different means at little to no cost (uniqueness check, native UUID types and generations).
 
 ## Modeling
 
