@@ -510,6 +510,48 @@ In many cases, an _object-relational mapper_ (ORM) simplifies working with datab
 
 ## Modeling
 
+The less triviality, and the more people involved, the more I urge developers to spend a lot of time preparing ideas and models:
+
+* To make sure everybody has understood the requirements: When people start arguing over something, at best, this rules out a divergence in the perception.
+* To make sure as many constraints and impacts as possible have been put on the table, especially when working on some existing solution: Mostly, nobody has the same picture of some setup in mind, including gaps here and there. If somebody raises _Hold on, what about..._, you may have crossed out some difficulty at a very early stage, saving you lots of headache. Leave a lot of room to think about here.
+* To have a basis for commiting plans: In a first step, identify what _logical_ units of your ideas ask for some in-depth thinking in a next step, so repeat the whole process at lower levels, thinking with interfaces. The more there is on the board, the more a project manager and you can design the first tasks &ndash; not necessarily implementation yet, but research, contacting the right people, asking for tools and budgets. Project managers love tasks, and in the best case, your very first tasks involve all elicitation steps to get things on the road afterwards, in the next iteration or sprint.
+
+By the way:
+
+* _Functional requirements_ &ndash; Requirements that refer to the purpose of the software, to the tasks to be fulfilled. This is what your customers are paying for, because they need it for doing their business better.
+* _Non-functional requirements_ &ndash; Every other requirement, including: Supported platforms, service level agreements, user authentication, fancy UIs. To get the whole picture, I recommend to read the [headlines of ISO 25010](https://iso25000.com/index.php/en/iso-25000-standards/iso-25010) whenever you need the whole catalogue to think about.
+
+Depending on your organization, requirements will rain down in different forms: Less formal when discussing internal tools to boost some department's productivity, highly formal when working with a customer. _Requirements elicitation_ is a huge topic on its own, asking for a distinct group of people, requirement engineers. I assume that, in whatever way, we have somebody having done this for us here.
+
+* It may not appear feasible for every software developer to read the (whole) requirement documents. Make sure to have at least two people reading these documents completely, synchronizing each other afterwards
+* Make sure to present or refresh a customer, the business domain, the problem at large, systems you will depend on, 3rd party components, targetted milestones and schedules to every software developer as a whole. Both ask for such an introduction, but also collaborate to any meaningful extent for such an event.
+* While developers often like to discuss and negotiate about the requirements imposed by some shareholder, it is often a waste of time. Something may sound stupid, and it maybe is, indeed. Yet you must focus on an _intrinsic_ test of the requirements:
+    * Are there any obvious gaps?
+    * Are there any evident contradictions?
+    * Are there conflicts to some existing setup left unaddressed?
+    * Is the shareholder fully aware of constraints that are imposed by some third party? Is some API not offering what the customer requests?
+    * Is every topic of ISO 25010 (non-functional requirements) addressed?
+
+One common misunderstanding that I have observed in agile teams: There is _always_ an initial set of requirements that somebody is going to pay for, or that is required to go into production, and failing to look at _that_ set completely, or simply ignoring (_backlogging_) parts of it as one tends to do in later stages, puts developers at risk to do decisions that do not pay off &ndash; while you must refrain from over-engineering (things you have no clue about if they ever come), do not start by shooting yourself in the feet if you know that a journey is longer than your body height.
+
+In software management courses, [you are probably](https://www.researchgate.net/publication/221440391_Successful_software_project_and_products_An_empirical_investigation/link/0c96052d424d188171000000/download) told that software project success largely depends on clear and stable requirements, and having an understanding of the problem's domain. Act like you have been told that.
+
+But after all, how can we _actually_ start? While you can start by whatever you think fits best to you, prepare yourself for some format that fits challenging and team discussion: People are visual (Sorry, I have no idea how to include blind people here.), they love charts, overviews, infographics, networks at whatever level is appropriate. Do not bother people by forcing them to read through paragraphs of text, dense grids of numbers, huge amounts of source code _in some kind of presentation_, this is what we like to do on our own, or when the time for details has come.
+
+So:
+
+* Pen and paper, maybe lots of them.
+* White boards, SMART boards, glass boards when working with people (preferrably being slightly moderated).
+* Digital tools when COVID19 hits hard again, for example _Google Jamboard_.
+
+This is _scratch material_, work on it in whatever way fits good.
+
+* If required, keep notes somewhere.
+* In the end, take a photograph.
+* Make a digital copy out of it.
+
+There is a bunch of tools that come handy creating a digitial form: Famous ones include _draw.io_, _Microsoft Visio_ (_Powerpoint_ as simple yet effective fallback), _Cloudcraft_ and [other generic and domain-specific](https://en.wikipedia.org/wiki/List_of_concept-_and_mind-mapping_software) stuff.
+
 ## Testing
 
 ## The Project
