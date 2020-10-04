@@ -531,26 +531,104 @@ Depending on your organization, requirements will rain down in different forms: 
     * Are there conflicts to some existing setup left unaddressed?
     * Is the shareholder fully aware of constraints that are imposed by some third party? Is some API not offering what the customer requests?
     * Is every topic of ISO 25010 (non-functional requirements) addressed?
-
-One common misunderstanding that I have observed in agile teams: There is _always_ an initial set of requirements that somebody is going to pay for, or that is required to go into production, and failing to look at _that_ set completely, or simply ignoring (_backlogging_) parts of it as one tends to do in later stages, puts developers at risk to do decisions that do not pay off &ndash; while you must refrain from over-engineering (things you have no clue about if they ever come), do not start by shooting yourself in the feet if you know that a journey is longer than your body height.
-
+One common misunderstanding that I have observed in agile teams: There is _always_ an initial set of requirements that somebody is going to pay for, or that is required to go into production, and failing to look at _that_ set completely, or simply ignoring (_backlogging_) parts of it as one tends to do in later stages, puts developers at risk to do decisions that do not pay off &ndash; while you must refrain from over-engineering (things you have no clue about if they ever come), do not start by shooting yourself in the feet if you know that a journey is longer than your body height.  
 In software management courses, [you are probably](https://www.researchgate.net/publication/221440391_Successful_software_project_and_products_An_empirical_investigation/link/0c96052d424d188171000000/download) told that software project success largely depends on clear and stable requirements, and having an understanding of the problem's domain. Act like you have been told that.
 
-But after all, how can we _actually_ start? While you can start by whatever you think fits best to you, prepare yourself for some format that fits challenging and team discussion: People are visual (Sorry, I have no idea how to include blind people here.), they love charts, overviews, infographics, networks at whatever level is appropriate. Do not bother people by forcing them to read through paragraphs of text, dense grids of numbers, huge amounts of source code _in some kind of presentation_, this is what we like to do on our own, or when the time for details has come.
+First, let us collect the things we are usually interested in visualizing around software:
 
-So:
+* Requirements: Before even starting modeling software, try to model requirements out of the interviews, protocols or textual representations. This way, we have a first, presentable double-check for understanding what a client expects, as well as a nice introduction for every developer.
+    * _Systems and actors_: What are the first (you), second (client) and third party players? What is their role, where are the boundaries of responsibility? Where do we find humans, where machines?
+    * _Glossaries and domain models_: What are the elements the client sees from the functional perspective? What are they, what are they not, how are they related? What are fundamental constraints?
+    * _Use cases, Interactions and Decisions_: What is supposed to be happening from the functional perspective?
+* Implementations: Knowing the requirements, we can continue thinking about drafting technical solutions.
+    * _Components_: How to logically design a setup of custom services, third party software, databases, storages, frontends, devices?
+    * _Hosting and Provisioning_: How to physically place and wire components?
+    * _Protocols_: How to communicate across individual components? From the logical perspective as in the [upper OSI layers](https://en.wikipedia.org/wiki/OSI_model#Layer_architecture) (5 to 7).
+    * _Entities and Relations_: How to squeeze the domain model into something to work with as a software developer?
+    * _Code_: How to actually encode all the stuff into your programming language without feeling ashamed?
 
-* Pen and paper, maybe lots of them.
-* White boards, SMART boards, glass boards when working with people (preferrably being slightly moderated).
-* Digital tools when COVID19 hits hard again, for example _Google Jamboard_.
+Let us examine a bunch of ways to represent this:
 
-This is _scratch material_, work on it in whatever way fits good.
+* Requirements:
+    * _System diagrams_:
+        * Put in every second and third party component _logically_: Users, systems, devices.
+        * Put in the first party components as blob(s) without going into any detail, they are the gaps to be filled later on.
+        * Use names, icons, colors, provide a short description where possible: _ACME auth service_, _Google Translate_.
+        * Draw lines that are supposed to indicate a general interaction.
+        * Draw a different kind of lines (dashed, dotted), to group components.
+        * _Do not_ paint use cases here, do not go into interaction details.
+    * _E/R diagrams_:
+        * Model entity and relations as seen from the functional requirements and constraints: _A user has an inventory_, _An inventory has many items, possibly none, and up to N_.
+        * Model entity and relations when imposed by some second/third party, simply to find analogies and aim for mirroring (if applicable): _Google ads campaign_, _LLVM expression_.
+        * _Do not_ model any interactions, just relations.
+    * _Decision trees_: For any non-trivial way to acquire decisions &ndash; by the way, do you know [how Slack decides on bothering you](https://imgur.com/gallery/0p5bV) with notifications? Think of other ways to communicate this feature.
+        * Make sure to label nodes by questions, atomically, i. e. one by one, represeting conjunctions (_and_) and disjunctions (_or_): _Value large enough?_, _Other value set to override?_
+        * Make sure to label edges appropriately: by boolean values, by labels, by integers and probabilities.
+        * _Do not_ model interactions here.
+    * _Flow charts_:
+        * Think of a start and all the ends of a _flow_, use bubbles: _Start_, _Success_, _Failure_, _Result A_.
+        * Use a human-readable, logical description for every action, use squares: _Cancel subscription_, _Send invoice by mail_.
+        * Use diamonds for decisions. They also represent loops: _Any item left in the queue?_
+        * Put any non-trivial decision diamond into a seperate decision tree, use an abstracted question then. _User gave consent to data transmission?_
+        * _Do not_ model actors here.
+    * _Use case diagrams_: A flow chart to be enhanced for taking actors into account on individual actions.
+    * [EARS](https://www.researchgate.net/publication/224079416_Easy_approach_to_requirements_syntax_EARS) and [Rupp's](https://francaballero.net/requirements_generator/): Methods to break down requirements into a human-consumable text structure that follows certain patterns, allowing data mining.
+* Implementations:
+    * _Components diagrams_:
+        * In contrast to the _systems diagrams_, include _your_ components logically, and include their relations.
+        * In the same fashion, include custom services, storages, databases, devices, third party software choices, general interaction, your all-winning ML models.
+    * _Host and provisioning diagrams_:
+        * In contrast to the _components diagrams_, focus on physical setups: hosts and their services, networks, devices, test setups.
+        * When using provisioning systems, take a special consideration &ndash; or even a layer between these two &ndash;, for example modeling topologies of _Kubernetes_ and cloud providers.
+    * _Sequence diagrams_:
+        * Every logical component gets a vertical line, the time is on the Y axis and _flows down_.
+        * Interaction is drawn by a line between some two lines, naming the interface: `--> GET /api/status`, `<-- 200 {...}`.
+        * The focus lies on interface invocations, waiting, synchronization and local activity over time.
+    * _E/R diagrams_:
+        * Draft or model your representation towards a solution.
+        * Be precise about soft and hard ownerships, cardinalities, hierarchies.
+        * Borrow elements from _Class diagrams_, see more on this below.
+        * Refrain from going deeper into language-specific aspects here.
+* Fitting into both categories:
+    * _State machine diagrams_: When there is a need to enforce a specific order or allowing a well-defined time for something to happen, _finite-state machines_ are your friend, both for thinking and representation.
+        * [State machines](https://en.wikipedia.org/wiki/Finite-state_machine#Representations) should represent some closed state, i. e. one unit or system at a time.
+        * State machines can be seen nested, so simply stick to the level of detail that is appropriate.
+        * Think of all the states, think of one initial state.
+        * Think of actions (transitions) that can change a state: This is the only legal interaction, reject everything else.
+    * [Petri nets](https://en.wikipedia.org/wiki/Petri_net): Model an application in terms of _places_ that can hold _tokens_ (whatever number and kind you need), and those tokens advance through _transitions_. It combines modeling, interactivity, parallelism and visual representation in a cool way.
+    * _Graphs_: Nothing beats drawing nodes and edges as you would do for the data structure mentioned earlier, when it comes to modeling relations and their weights, directions and ways.
 
-* If required, keep notes somewhere.
-* In the end, take a photograph.
-* Make a digital copy out of it.
+The last bucket lists examples of representation models that have a huge background in computer science, and so they work as fundamentals in formal verification at different stages (_Can this use case reach a dead lock? What about the implementation?_) and exhibit all kind of interesting relations (_How to model some state machine as a Petri net?_). This is where some dry courses of theoretical computer science suddenly come in handy when trying to do something cool by combining modeling and theory, in order to make promises, testing ideas and finding efficient solutions.
 
-There is a bunch of tools that come handy creating a digitial form: Famous ones include _draw.io_, _Microsoft Visio_ (_Powerpoint_ as simple yet effective fallback), _Cloudcraft_ and [other generic and domain-specific](https://en.wikipedia.org/wiki/List_of_concept-_and_mind-mapping_software) stuff.
+### UML
+
+I never encountered anybody for now who was remotely enthusiastic when talking about [UML](https://en.wikipedia.org/wiki/Unified_Modeling_Language). Or [WSDL](https://en.wikipedia.org/wiki/Web_Services_Description_Language), or some other incarnation of a [feature creep standard](https://xkcd.com/927/). I am no exception here, but I want to both prepare the section of tools below, and like to outline what use cases I found it really handy anyway.
+
+Looking at the list of _diagrams_ of the previous section, UML provides a lot of them, maybe at a different name. Recommendations:
+
+* Know the language-independent parts of [class diagrams](https://en.wikipedia.org/wiki/Class_diagram): Relations, compositions, hierarchies, generations. As the name _class_ indicates, it is closely related to object-oriented languages, seamlessly matching C++, Java, C#. Fortunately, the world is more than that, and some languages have different concepts, maybe not even classes: structs, traits, tables, tuples. Yet, let us take what is portable both across languages and diagram types (E/R diagrams) for general understandability.
+* Know the [sequence diagrams](https://en.wikipedia.org/wiki/Sequence_diagram).
+* Look at the remaining collection of diagrams if you are lacking creativity or need formalisms.
+* Make use of more UML, and stick to all the conventions (instead of using custom formats), the less you know who is about to depend on interfaces and behaviors outside of your scope: interface users, your future but unknown coworkers, manual readers.
+
+### General ideas
+
+After all those ideas and concepts, there are some things that are generally a good idea when working on designing solutions:
+
+* Remember, it is all about sharing software engineer knowledge easily, validating requirements and picking up ideas at some later point.
+* People like visuals (sorry, blind guys, I have no idea here), so make a consistent use of shapes, colors, positions, labels, images, interactivity.
+* Do not mix representations into some super-blueprint, it will not work and fail for being indecipherable at every non-trivial scope. One aspect at a time, let UML be a guide.
+* Do not mix scales. High-level models should remain high-level, as well as intermediate levels and details. Nobody ever looks at everything at once, but only at what is the required point of entry. Add information that is essential, but skip what better fits into some more detailed view.
+* If models stick close to the code, i. e. working with language specifics and actual code lines, make sure not to lose yourself in synchronising either part. Better abandon that idea or make sure your tooling perfectly fits into the environment.
+* Have the tools available to continue working on it. ASCII art and some exported JPEG image file may look cool, but the next one doomed to work on it is likely to have the day ruined. See below for some ideas here.
+* When sensible, combine your representations with what is appropriate: Pseudo code, illustrations, literature references, formulas, plain old text. Wiki articles often allow some full-scale environment for elaboration.
+* Speaking of wikis, and evenly important: Manage all that stuff well! Know how to find it, how to search by related terms, how to quickly collaborate on and update material. Have it available by hyperlinks in your articles, readmes, code file headers, task trackers.
+
+As there are too many tools out there, generic, language and domain specific ones, I will simply try to give some generic tools to start with,
+
+* Wikis, we just named them: self-hosted (_Mediawiki_), as a service (_Confluence_), piggy-backed (_GitHub_ repository wikis).
+* Suitable drawing tools: _draw.io_, _Microsoft Visio_, _Inkscape_.
+
 
 ## Testing
 
