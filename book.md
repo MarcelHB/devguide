@@ -663,7 +663,7 @@ A collection of random and portable _anti-patterns_ that I frequently encountere
     * Having people or teams that use whatever tech they like and talking over interface is simply sufficient.
 
   Signs that some guys maybe went for that hype too early:
-    * Having data partitiooned across services that is frequently needed together, failing at performance or exploding in heap usage because of joining data.
+    * Having data partitioned across services that is frequently needed together, failing at performance or exploding in heap usage because of joining data.
     * Ending up using the the same filesystems, database and tables to overcome the previous issue with close code duplication.
     * Not knowing a way how to safely migrate services and schedule the hierarchy without taking everything down, i. e. sacrificing uptime and SLAs.
     * Not knowing how to trace behavior across services safely, fuzzy ways to correlate errors (have a look at [OpenTracing](https://opentracing.io/)).
@@ -671,6 +671,35 @@ A collection of random and portable _anti-patterns_ that I frequently encountere
   ~~Micro~~Services are not a per-sé solution to everything. Has XML been? Blockchain? Similar to that _AbstractSingletonEtcThing_ above: Start designing over the requirements, not by the patterns.
 
 ## Testing
+
+Over the time, I found the the question _Is it designed well?_ equivalent to _Can you show me how to test it?_. Having the tests at hand helps us to understand the following:
+
+* How to do little or minimal setup?
+* How to actually use it? How does input look like?
+* Interaction of components by isolating errors and regression errors vertically (it looks good up to _that_ layer of code) and horizontally (we have messed up working on _these_ inputs).
+
+If something helps us understanding setup, use and blast radius more easily by looking at smaller, dedicated code snippets, we can judge the design for being good. Our holy abstract-factory pattern alone will not help much here, I have seen such things to be completely out of ease for testing. 
+
+Whatever we test, testing always challenges two design aspects:
+
+* _Testbed-ability_ &ndash; The ability to only look at what we are interested in, keeping away all other side-effects that steal our setup and run time.
+* _Observability_ &ndash; The ability to unambiguously look at the detailed effects of our inputs. The less we are able to judge with confidence, the worse.
+
+_Test-driven development/design_ (TDD) is a very good way to train people with little to no experience in writing tests for these two concepts from the very beginning of writing code. With some degree of experience, you probably think less in terms of TDD but going for better designing that makes it hard to distinguish how you actually spent your time writing the resulting code &ndash; everything else is more like a dogma.
+
+Looking at tests, we have multiple dimensions of what to think about:
+
+* logical layers (ranging from unit to end-to-end tests),
+* specifications and assumptions (white and black box tests),
+* non-functional aspects (performance, resilience).
+
+Details of definition and layering slightly vary by context, language or framework, but these layers of testing are to be found almost everywhere:
+
+* _Unit tests_ &ndash; The smallest pieces of executable code: methods, member methods, static portions. Expecting them to do what they are supposed to do locally.
+* _Integration tests_ &ndash; The combination of suitable units under controlled playbooks, also using underlying systems in a test mode (databases, file system, mock servers). Expecting assumptions to hold across units.
+* _System tests_ &ndash; The invocation of defined system interfaces, like invoking the executable and its parameters, opening network connections and doing HTTP requests or other interactions. Expecting well-defined specifications from the interaction level to be fulfilled.
+* _Acceptance tests_ &ndash; Combining real-world interactions with a system for fulfilling the business case.
+* _End-to-end tests_ &ndash; Doing acceptance tests on the highest level of interaction, having a full-scale test setup underneath: UI interaction, workflow views over heterogeneous components, interactinge with remote services and hardware.
 
 ## The Project
 
