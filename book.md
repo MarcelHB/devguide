@@ -379,7 +379,7 @@ Let us do not forget _all input is evil_:
 Aside from injection attacks or DoS attacks, there are other kinds of attacks you should generally be aware of:
 
 * _Side-channel attacks_: Does guessing pieces of a secret lead to differences in the response time, the power consumption? Is there any kind of leftover afterwards, like cache contents? Intel had this kind of bug [in hardware in recent years](https://meltdownattack.com/), other CPU manufacturers probably as well. It also holds for software, like algorithms terminating early or late, depending how much of the input is guessed correctly. Even comparing an input hash with a stored password hash (again, use something like _bcyrpt_ here!) naively &ndash; byte per byte until the end or the first difference &ndash; may beat blind brute-force attacks, [even over a noisy channel](https://www.blackhat.com/docs/us-15/materials/us-15-Morgan-Web-Timing-Attacks-Made-Practical-wp.pdf) like the internet!
-* _Enumeration attacks_: Allowing somebody to systematically obtain data, secrets and statistics by just counting. Think of counting new users per day over some URL containing an incrementing ID, or obtaining rebate codes or digital vouchers by just increasing the code number by one.
+* _Enumeration attacks_: Allowing somebody to systematically obtain data, secrets and statistics by just counting. Think of counting new users per day over some URL containing an incrementing ID, or obtaining rebate codes or digital vouchers by just increasing the code number by one. And while a monotone growth is easily spottable, better enumeration attacks may look organic/random but are actually not (using [Feistel networks](https://en.wikipedia.org/wiki/Feistel_cipher) and just knowing the upper bound).
 * _Filter attacks_: While statistics is supposed to abstract the individual data contribution, generously allowing setting of filters may reduce the sample size to a degree that you can infer data ththat you were supposed to protect.
 * _Human factor_: The most frustrating part. Default passwords, shared passwords, bad passwords, written-down passwords, update fatigue, bad configurations, ignorance, gullibility, bribery. There is a whole discipline of _threat modeling_, going beyond the world of software.
 
@@ -626,9 +626,49 @@ After all those ideas and concepts, there are some things that are generally a g
 
 As there are too many tools out there, generic, language and domain specific ones, I will simply try to give some generic tools to start with,
 
+* Suitable drawing tools: [diagrams.net](https://app.diagrams.net/) (was _draw.io_, strong general recommendation), _Microsoft Visio_, [Inkscape](https://inkscape.org/).
+* Sequence diagrams: [sequencediagram.org](https://sequencediagram.org/)
+* For algorithmic sketching: [Processing](https://processing.org/)
 * Wikis, we just named them: self-hosted (_Mediawiki_), as a service (_Confluence_), piggy-backed (_GitHub_ repository wikis).
-* Suitable drawing tools: _draw.io_, _Microsoft Visio_, _Inkscape_.
+* Visual Markdown editors with syntax support: [Typora](https://typora.io/)
 
+Also, an ultimate fallback tool for rough visual sketching: _Microsoft Powerpoint_. For more tools, consider the Wikipedia collections: [diagrams](https://en.wikipedia.org/wiki/Category:Diagramming_software), [UML](https://en.wikipedia.org/wiki/Category:UML_tools).
+
+Help yourself, even some technically cheap approaches may help storytelling your ideas a lot!
+
+Since no topic on software modeling is complete without naming them, a bunch of principles that help (re)factoring a model, or just an idea:
+
+* [SOLID](https://en.wikipedia.org/wiki/SOLID): Focus on object-oriented environments, but somewhat portable:
+  * S &ndash; _Singe resposibility_: Do not do too much in your unit, preferably just one _thing_.
+  * O &ndash; _Open-Closed principle_: _Open for extension, closed for modification_, design to leave a unit's (binary) code in peace while allowing to have an alteration slip in front of it.
+  * L &ndash; _Liskov substitution principle_: Replacing something with its subtype should go unnoticed from the functional perspective.
+  * I &ndash; _Interface segregation_: Single responsibility for interface designing.
+  * D &ndash; _Dependency inversion_: Prefer the use of abstractions (interfaces, higher-level classes, abstract classes) over concretions. Like allowing a stupid test surrogate class to sneak in, not just its brother of production.
+* [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller): Most of us probably learn this from web frameworks or mobile applications, but its underlying concept is much broader:
+  * M &ndash; _Model_: Logic and data that works _as is_, not aware of how somebody or something looks at it.
+  * V &ndash; _View_: A representation of one or many models: a load into a UI component, a data serialization, a context-sensitive decoration.
+  * C &ndash; _Controller_: Loads model(s) and view and wires them together, with flow-details depending on the context (also see _MVP_).
+
+For many more _patterns_ and _anti-patterns_, pick your context and language of choice for more literature. Have you ever thought of _Hey, let's solve this by an 'abstract-factory pattern'?_ No? Me neither. So far, I have not seen anyone designing software by patterns from top to down _upfront_. Instead, we put ideas together and hopefully organize into some way that eventually ends up in some pattern, not in an anti-pattern. Otherwise, I really want to know the person that claims to have designed Spring's [AbstractSingletonProxyFactoryBean](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/aop/framework/AbstractSingletonProxyFactoryBean.html) before writing a single line of a web-service in Java, and not by facing some concern that brought us here.
+
+A collection of random and portable _anti-patterns_ that I frequently encountered so far, and that does not fit into the other sections alone:
+
+* Doing more, or something very different, than what the name of a method suggests. If your unsuspicious-looking class `BoringStruct` has an unsuspicious-looking method `setValue`, make sure it is _just_ doing that, not sending an email to the customer of that newly set value, not growing tomatoes by the amount of _value_, not doing anything _but_ setting the value. Despite some questionable modeling, having `setValue` and `setValueAndGrowTomatoes` in `BoringStruct` is Ok, `setValues(..., bool tomatoes = true)` is _not_.
+* Doing too much method overloading. While it is nice to a certain, little degree, depending on your language, wildly adding methods that take abstractions _in addition_, or being subject to arcane type casting, may completely change where you end up from one minute to the next. On the tiniest bit of risk for this to happen, start distinguishing methods by name.
+* Abusing private member fields for passing around values between invoking private functions. This introduces a potential or actual non-determinism when there is no synchronization: Two parallel accesses to some instance suddenly start to interfere for no obvious reasons. Have members represent the instance's state, not your laziness to store two lists of stuff between doing this and that, and use the local method stack instead, always. Or in other words: How to design classes with names ending on `Service`, `Client` or `Factory` wrong.
+* Falling for _microservices_ for the wrong reasons (some article on _medium.com_?); and just maybe use the term _micro_ less, since most actually are not so micro anyway. Good and very good reasons to have a diverse range of _services_:
+    * Different requirements towards the underlying platform (OS, hardware).
+    * Scaling independently and meeting different constraints.
+    * Reduction of blast radius risks over having logically unrelated stuff close together otherwise.
+    * Having people or teams that use whatever tech they like and talking over interface is simply sufficient.
+
+  Signs that some guys maybe went for that hype too early:
+    * Having data partitiooned across services that is frequently needed together, failing at performance or exploding in heap usage because of joining data.
+    * Ending up using the the same filesystems, database and tables to overcome the previous issue with close code duplication.
+    * Not knowing a way how to safely migrate services and schedule the hierarchy without taking everything down, i. e. sacrificing uptime and SLAs.
+    * Not knowing how to trace behavior across services safely, fuzzy ways to correlate errors (have a look at [OpenTracing](https://opentracing.io/)).
+
+  ~~Micro~~Services are not a per-sé solution to everything. Has XML been? Blockchain? Similar to that _AbstractSingletonEtcThing_ above: Start designing over the requirements, not by the patterns.
 
 ## Testing
 
