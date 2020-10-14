@@ -154,7 +154,7 @@ Primitive types usually refer to what can be used straight by the processor, wit
 
 ### The O thing
 
-In pre-COVID19 times, shaking hands was the etiquette in social gatherings. Now, let us think of some kind of party with the host having some kind of self-imposed shaking-hands policy. Now let us sum the number of hand-shakes of all participants individually, including the host:
+In pre-COVID19 times, shaking hands was the etiquette in social gatherings. Now, let us think of some kind of party with the host having some kind of self-imposed shaking-hands policy. Let us sum the number of hand-shakes of all participants individually, including the host:
 
 * He shakes hands with only the very first guest arriving. No matter how many others will come, the total number will remain _constant_ at 1.
 * He likes to spend more time with other activities that need more attention the more guests arrive, so after each handshake, he skips some people, and the number of skips doubles every time. The number of handshakes grows _logarithmically_ to the number of guests.
