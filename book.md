@@ -392,7 +392,7 @@ For the human factor, there is a wide range of solutions of differenct convenien
 
 So even if you fully trust somebody, there is a stack of threats involved that do not care for your mutual trust. Limiting the potential damage, the _blast radius_ must be done regardless. The range of implementations of protection is too large to mention them here, so I strongly recommend to obtain designated literature.
 
-As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to externally provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern.
+As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to externally provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern. For a large overview and deeper insights of domain-specific attacks and security engineering, I recommend the book [Security Engineering](https://www.cl.cam.ac.uk/~rja14/book.html) by Anderson.
 
 ## Databases
 
