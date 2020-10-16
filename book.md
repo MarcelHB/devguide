@@ -487,7 +487,7 @@ Indexes. Use them, and use them correctly:
 * Assume that only one index at a time can be used per table scan.
 * Foreign-key constraints do not set up indexes automatically.
 * Materialized views can also benefit from indexes.
-* Most important: Learn to read the `EXPLAIN` result of your query. Depending on your database, it shows the query execution plan, including key candidates, chosen keys, join types or hints for doing expensive operations, such as a full-table scan or file sorting. Use some offline schema to experiment.
+* Most important: Know to read the `EXPLAIN` result of your query. Depending on your database, it shows the query execution plan, including key candidates, chosen keys, join types or hints for doing expensive operations, such as a full-table scan or file sorting. Use some offline schema to experiment.
 * Some databases allow picking the index manually on a per-query basis, overriding the query planner. Be careful to do so, i. e. do an evaluation first, and do not expect portability.
 
 Some general remarks on database use:
@@ -509,6 +509,11 @@ In many cases, an _object-relational mapper_ (ORM) simplifies working with datab
 * ORMs usually have at least two ways to interact with the database: One that is supposed to work on instances, and one that does not. One will create objects, invoke hooks, do validations. The other one skipps all that stuff. A simple _DELETE-BY-and-good-bye_-operation may not ask for instance lifetime cycles anymore. So chosing the wrong choice will either cost you plenty of time, or makes you skip all your nice business code.
 * Make sure your ORM application-side validations are not less strict than your database's.
 * More than often, it makes sense to maintain an optimistic locking on a table by the ORM. This way, the ORM detects if somebody attempts to commit a stale object, i. e. somebody else did an unforeseen change in the meantime. Do not forget to pass that version token around, like over your HTTP interface, so that you can inform a user properly.
+* Some generally cool features that are widely available across relational databases that are sometimes overseen:
+    * _Common table expressions_ (CTEs): Predefining result sets by a `WITH` so that there is no need to rewrite them everywhere in a query (think of uses in different statements combined over a `UNION`).
+    * Partitioning: Physically splitting row data by a partition criterion (like year of a date column). This way, data is located in different underlying files, allowing mixed read-only access and cold storage transfer.
+    * _Window functions_: Ways to relate values of rows around to the current one, like calculating a rolling sum or a floating average.
+    * Conflict resolution: When inserting batches of rows, violating constraints (like uniqueness) may abort the statement with an error. `ON CONFLICT`/`ON DUPLICATE KEY` modifiers may help skipping such attempts or doing a conflict resolution (overwriting values).
 
 ## Modeling
 
