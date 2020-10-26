@@ -705,8 +705,38 @@ Details of definition and layering slightly vary by context, language or framewo
 * _Unit tests_ &ndash; The smallest pieces of executable code: methods, member methods, static portions. Expecting them to do what they are supposed to do locally.
 * _Integration tests_ &ndash; The combination of suitable units under controlled playbooks, also using underlying systems in a test mode (databases, file system, mock servers). Expecting assumptions to hold across units.
 * _System tests_ &ndash; The invocation of defined system interfaces, like invoking the executable and its parameters, opening network connections and doing HTTP requests or other interactions. Expecting well-defined specifications from the interaction level to be fulfilled.
-* _Acceptance tests_ &ndash; Combining real-world interactions with a system for fulfilling the business case.
-* _End-to-end tests_ &ndash; Doing acceptance tests on the highest level of interaction, having a full-scale test setup underneath: UI interaction, workflow views over heterogeneous components, interactinge with remote services and hardware.
+* _Acceptance tests_ or _End-to-end tests_ &ndash; Combining real-world interactions with a system for fulfilling the business case. Executing tests on the highest level of interaction, having a full-scale test setup underneath: UI interaction, workflow views over heterogeneous components, interactinge with remote services and hardware.
+
+Regardless of what kind of test level we are looking at, we can write tests by either knowing its implementation, or just by specifiying its expectations from an outsider's perspective:
+
+* _White-box tests_ &ndash; The implementation is known with respect to execution paths of the underlying code or programs, and in the knowledge of characteristics of the implementing system (like testing for/against a desired/unwanted configuration setting).
+* _Black-box tests_ &ndash; Roughly, when having a certain input, a certain result is expected as an outcome, regardless if powered by a quantum machine or [The Turk](https://en.wikipedia.org/wiki/The_Turk).
+* _Gray-box tests_ &ndash; What comes out if the writer of black-box tests is the same person as the one writing the implementation, mostly in terms of looking for suitable test inputs.
+
+White-box testing is subject to some controversy, usually when it comes _... but the coverage! It just dropped._ Well:
+
+* White-box tests do not focus to answer the question of doing the right thing (specification), but of doing things right &ndash; in terms of having written code that does not end up producing errors given some legal inputs.
+* A very good reason to have a _suitable_ degree of white-box tests is working with languages that are highly dynamic, i. e. not allowing an inspection-time assertion whether a variable or method is defined on use or not. Such languages include JavaScript, Ruby and Python. Which is probably a strong motivation for having something like _TypeScript_.
+* _Suitable_ in a way that code may exhibit an exponentially growing space of possible execution paths. Real-world _coverage_ is calculated in a simple way by measuring if _any_ test in your test suite ever touched that line. But what if just one of these paths leads to an error, and there are already lots of `if`-branches inside your code? Coverage number grins at you, manager is having a break-down.
+* For their pessimistic stance of maintainability over growing code, people putting their hands at an implementation later will probably spend more time identifying existing test cases and strategies and think of ways not to make cases explode exponentially: _The happy-path™_, making testing economic since 1958.
+
+So, skipping white-box tests for typed languages? Or altogether? Fortunately, there is nice way through called _mutation testing_.
+
+_Mutation testing_ requires the help of some tool that knows how to read conditions of the underlying unit (thus a white-box): What if the tool simply mutates your code a bit (inverting conditions, exchanging operators or constants), and _none_ of your tests indicate an error afterwards? We have failed to write a test case that checks hitting an execution path for the wrong reason. That _mutant code_ is said to be _killed_ by adding such a test. If a mutation goes unnoticed, so a human error will.
+
+_Black-box testing_ is usually more pleasant since we are testing whether we are doing _the right thing_: Adhering to interfaces, input specifications or standards, or simply testing whether some bug report of inputs or use cases can be reproduced, becomes fixed, and stays fixed (_regression test_). Hold on, a bug report? For my full suite of mutant-safe white-box tests and all my black box-tests? &ndash; What if we simply missed something completely? There is probably little help against missing a page or two of the spec document, but fortunately there are tools that help us go through much of the known stuff:
+
+* _Fuzzing_ &ndash; Throwing random things at your system. Fuzzing refers to generating input values by some strategy, but also to permutating calls, like API calls and system calls. [syzkaller](https://github.com/google/syzkaller/blob/master/docs/internals.md) has found bugs in the Linux kernel over the recent years by fuzzing syscalls, [CSmith](https://embed.cs.utah.edu/csmith/) helped finding bugs in C compilers over legal source code. But how to do so without wasting a huge of amount of time over complete garbage? One way to do so is grammar-based fuzzing. A grammar specifiying legal input can be used for two things: 1.) Testing whether the system responds to some valid, random input following the grammar correctly and 2.) whether it rejects every random break-out from the grammar. Fuzzing is actually a very cool topic, helping in black-box tests, security and resilience. Research has found a broad scope for mining actual test-inputs (also from a white-box aspect). Please refer to something like [The Fuzzing Book](https://www.fuzzingbook.org/) for an overview, techniques and code.
+* _QuickCheck_-ing &ndash; _QuickCheck_ is the name of the original Haskell library generating tests over property descriptions. I'm sure it is some kind of fuzzing but it is worth its own mentioning: Following the type signatures/hints, it generates an amount of inputs and tests for the specified properties to be fulfilled. If something breaks the property, the input is attempted to be reduced to the culprit (type). [ScalaCheck](https://www.scalacheck.org/) gives a nice impression of such an implementation, with other languages having [similar tools](https://en.wikipedia.org/wiki/QuickCheck#Software).
+* _Boundary Value Analysis_ (BVA) &ndash; A very simple tool to do by hand, following the idea: _Many errors happen at handling boundary values_. `OutOfBoundsException` or `Uncaught TypeError: X is undefined` sound familiar? No matter what you need to test, _always_ test the boundary values, basically, and building up on:
+    * Integers: legal maximum, `0`, legal minimum (signed types), maximum collection/string index, and +1 of that value
+    * Floats: `Infinity`, `NaN`, `0.0`
+    * Reference types: `null/nil/None/nullptr/NULL/undefined`
+    * Strings: empty strings, blank strings, emojis
+    * Collections: no element, one element, multiple elements
+
+    Custom and composite types probably have analogies to test in the same matter.
+
 
 ## The Project
 
