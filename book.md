@@ -676,6 +676,16 @@ A collection of random and portable _anti-patterns_ that I frequently encountere
     * Not knowing how to trace behavior across services safely, fuzzy ways to correlate errors (have a look at [OpenTracing](https://opentracing.io/)).
 
   ~~Micro~~Services are not a per-sé solution to everything. Has XML been? Blockchain? Similar to that _AbstractSingletonEtcThing_ above: Start designing over the requirements, not by the patterns.
+* Do not reinvent the wheel when thinking of external interfaces. There are plenty out there. Some guidelines to look at:
+    * [CLI](https://clig.dev/)
+    * [RESTful](https://restfulapi.net/) and [GraphQL](https://graphql.org/learn/)
+    * [Signals](https://www.sharcnet.ca/help/index.php/Signal_Handling_and_Checkpointing) (mostly non-Windows)
+    * SQL with [DIY backends](https://calcite.apache.org/docs/tutorial.html)
+* If you design a library or SDK, users may want to mock components of it for testing. Depending on the language, do them a favor by:
+    * Providing public abstractions and interfaces to customize for testing.
+    * Allowing (optionally) injecting components that encapsulate otherwise unwanted side-effects.
+    * Refraining from making use of language features to bar your public components from being mocked (like Java `final` classes and methods).
+    * Allowing to configure non-production, custom-built mock server hosts, even with TLS verification disabled.
 
 ## Testing
 
@@ -689,7 +699,7 @@ If something helps us understanding setup, use and blast radius more easily by l
 
 Whatever we test, testing always challenges two design aspects:
 
-* _Testbed-ability_ &ndash; The ability to only look at what we are interested in, keeping away all other side-effects that steal our setup and run time.
+* _Testbed-ability_ &ndash; The ability to only look at what we are interested in, keeping away all other side-effects that also steal our setup and run time.
 * _Observability_ &ndash; The ability to unambiguously look at the detailed effects of our inputs. The less we are able to judge with confidence, the worse.
 
 _Test-driven development/design_ (TDD) is a very good way to train people with little to no experience in writing tests for these two concepts from the very beginning of writing code. With some degree of experience, you probably think less in terms of TDD but going for better designing that makes it hard to distinguish how you actually spent your time writing the resulting code &ndash; everything else is more like a dogma.
@@ -736,6 +746,11 @@ _Black-box testing_ is usually more pleasant since we are testing whether we are
     * Collections: no element, one element, multiple elements
 
     Custom and composite types probably have analogies to test in the same matter.
+
+Some further hints on testing:
+
+* If you have to write a custom test runner and need to think of a way to output, consider [TAP](https://testanything.org/) for a simple pattern.
+* Research for tools to replay a subset of remote host communication for running in an isolated system environment, examples include [Ruby VCR](https://github.com/vcr/vcr) or [Java WireMock](http://wiremock.org/).
 
 
 ## The Project
