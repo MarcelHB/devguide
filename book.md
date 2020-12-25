@@ -752,10 +752,119 @@ Some further hints on testing:
 * If you have to write a custom test runner and need to think of a way to output, consider [TAP](https://testanything.org/) for a simple pattern.
 * Research for tools to replay a subset of remote host communication for running in an isolated system environment, examples include [Ruby VCR](https://github.com/vcr/vcr) or [Java WireMock](http://wiremock.org/).
 
-
 ## The Project
 
-## The Running Project
+Hereby, we understand _project_ as the software-centered environment around a software product and its development, so the mentioned aspects should not be consued with _project_ as in _Project Management_ (the Gantt charts and stuff). Every non-private project, open or closed source, should be set up under the following assumptions:
+
+* There will be more than one person involved, or another person after you.
+* That somebody will start by little to no knowledge about the past, maybe also withany any knowledge about the current state.
+* That somebody will probably arrive by a blank setup, that is not what you likely need to get things running.
+* That somebody is biased and maybe needs to be kept away from the idea to _just rewrite it_ or _do my own thing_ because the entry into the project is just frustrating, and not because there is an otherwise good reason to do so.
+
+### README &ndash; no really, read me, but also write me
+
+When using GitHub, GitHub may show you projects, that may be of your interest. Sometimes, I click one of them because of the name, the main technology, or maybe just for curiosity and boredom. _Sometimes_ as in _way too much for my expectation_, I end up in a project and have little to no idea what this is about. While there is a `README` file, it is not helpful to an outsider in terms of understanding, but also leaves nothing but a heuristic assumption of how to get into it.
+
+A `README` is part of the much larger environment of documentation, yet it serves a very important idea. Let us call it the _Principle of first touch documentation_ (PoFTD): What is it what we see on the root level of the software project? And more generally: What is it that I have _here_, no matter where I am in the hierarchy exactly? But let's start by a top-level `README` file:
+
+If we have a collection of loosely coupled things (let's say scripts or schema files):
+
+* What do we collect here?
+* What belongs in here, what does not?
+* What tools and setups do I need to work with whatever here, and where to obtain them?
+* What is imperative to know?
+
+If we are on the root level of a logical unit or suite, please mention:
+
+* A one-liner what this is.
+* A _tl;dr_ (_too long; don't read_) paragraph or enumeration that describes a little more what this is.
+* Links for further resources (Wiki, Homepage, `docs/` folder) and, if available, pre-built package downloads.
+* If applicable, a short example demonstrating its use for a better understanding, maybe even a screenshot.
+* The list of requirements (and exact version numbers where required) to build this project.
+* The build and test instructions.
+* The instructions to make it work and deploy (in simple circumstances).
+* Unless asking for some large-scale documentation in a designated place, a description of configuration and parameters.
+* If applicable, notes how to contact maintainers, ask for support and conditions for contribution.
+* If applicable, a short mentioning of license concerns (with full terms to be put in a seperate file, like `LICENSE` or `COPYING`).
+* Use some sane formatting, that does not require a reader (so no PDF and RTF; HTML only if accompanied by some other format): Plain text (maybe [RST](https://en.wikipedia.org/wiki/ReStructuredText)) and markdown are common ways to go.
+
+If the project is of non-trivial size, apply PoFTD down the line, going more into detail where it makes sense:
+
+* As a sub-`README` in a subfolder.
+* As a comment block in a module or package root file.
+* As a comment block in a source file.
+
+In some projects, maintainers are pedantic about having correct license headers in source files but totally lack what this unit is about, and what's technically going on here, or just don't know anymore and that's equally bad. As a consequence, people are forced to reverse-engineer mechanisms, signatures, edge-cases &ndash; and chances are good that they are going to miss something, even after spending a lot of time there. So do not hestitate:
+
+* To describe what a code unit is concerned about,
+* to demonstrate how inputs may look like and what is going to happen to them.
+* to mention the mechanisms that are implemented/used (_we are using a DFS/FFT/Kayutsu-Meinhorst decompsoition to ..._), and where exotic things are described in detail.
+
+Close-code documentation (function signatures, classes, packages) profits from following some documentation notation that supports creating a nice looking (such as HTML) documentation of it, or to be used directly inside of an editor/IDE. Examples include _Doxygen_, _JavaDoc_, _PyDoc_, _RDoc_.
+
+### Guides
+
+Depending on what you are developing, consider providing example-driven guides. With only anecdotical justification, I find documentation that provides guides with examples of code of how to cover 50% of your primary questions when using your software or library much more helpful than being forced to read through 40 chapters first, and I doubt the ordinary developer is capable of ingesting that much quickly.
+
+Two good examples include: [Rails guides](https://guides.rubyonrails.org/getting_started.html) and [Jooq tutorials](https://www.jooq.org/doc/3.15/manual/getting-started/). Focusing on what matters first, brief and clear code snippets of how to do it, probably allowing the viewer to Ctrl+F to the sections for particular questions.
+
+In contrast, look at how much _Spring_ [needs to tell you](https://docs.spring.io/spring-framework/docs/current/reference/html/) how little _you_ have to do for yourself (yes, there are dozens of _Getting Started_ [guides](https://spring.io/guides#getting-started-guides) taking 15-30 minutes _each_).
+
+Help your users and developers to quickly adopt the project and to bring them on the right path.
+
+### Code contribution management
+
+I closely stick to features that are well-known to be available and used with `git` version control. Every interesting, multi-collaborator project needs a bunch of policies to keep the degree of frustration low and management easy. For everything, of course, there is probably some kind of religion around it, but the core remains the same:
+
+* _Commits_: 
+    * Title: What did I do where? (Good: `FS: support for async I/O`, bad: `bugfix`, also [XKCD](https://xkcd.com/1296/))
+    * Body: 
+        * When non-trivial, a _change_ rationale. (Good: `This fixes a race condition when ...`)
+        * _Trace links_, such as a requirement ticket number, bugtracker ticket number, GitHub issue number.
+    * Convention examples: [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), [Semantic commit messages](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716).
+    * Generally good ideas:
+        * No commit ever carries two unrelated changes, also known as _atomic_ commit.
+        * A commit is &ndash; ideally &ndash; not breaking building and tests.
+        * Cleaning up/fixing commits before going public. Get familiar with [interactive rebasing](https://git-rebase.io/).
+    * Profit:
+        * _Bisection_ &ndash; When looking for a subtle introduction of bugs, `git bisect` is a powerful tool to find a commit that introduced something. But if the amount and quality of commits is unnecessarily bad, it loses its power quickly ([usage tutorial](https://www.tutorialdocs.com/article/git-bisect-tutorial.html)).
+        * _Tracing_ &ndash; When years pass, and people come and go, it may help to avoid mistakes of the past and recover the context and rationale of decisions. Maybe also somebody comes up with an idea for automatic ingestions, or simply for some later ISO requirement.
+  * _Branches_:
+    * Naming: It's never wrong to have a name that helps recovery after forgetting a branch after a while. It's quite common to also include a trace link, such as `issue-123_mac_performance`.
+    * Semantics: What branches do you need (versions lines, customer lines), for what kind of development (milestones, features, bug fixes)?
+    * Updating: How and when to pull updates from its origin into the branch? 
+    * Merging: _squashing_ (all commits collapse into one), _merging_ (makes the history look like tracks and switches) or _rebasing_ (linearizing the history)?
+    * Convention examples: [Git flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/), [Linux](https://www.kernel.org/doc/html/latest/process/2.Process.html).
+    * Generally good ideas:
+        * Do not mess up git concepts of merging and rebasing.
+        * Avoid cross merging at all costs (if there is a good reason: cherry-picking), otherwise you probably end up in hell.
+    * Profit:
+        * As little merge conflicts as possible. Cross-merging and rebasing of different branches (look at [this ... impressive](http://justinhileman.info/article/changing-history/) network) at a certain point and dimension may lead to painful, hour-long conflict resolution. They will probably fail, and eventually, we have to start over. Simply stick to the rules!
+  * _Versioning_: Depending on the environment and needs, versions may be helpful or just ignored (e. g. by considering git revision hashes sufficient). _Tags_ are your friends. A common and simple to understand schema is [Semantic versioning](https://semver.org/).
+  * _Reviewing_:
+      * What to obey? Agree on requirements for getting code reviewed for actual merging: code conventions and quality, availability of documentation and tests, the positive results of code scanners.
+      * When to start? I have seen policies to publish branches, e. g. by a _GitHub pull request_ or _GitLab merge request_ only when they are considered _ready to review_. I considered WIP-publishing often as a useful place to publicly put discussions on development related to code, and for asking specific questions. Help yourself with labels and state indicators.
+      * Who to involve? Who are suitable reviewers, who is required to grant merge permission?
+      * Profit:
+          * No losing or rotting of branches, getting the right people to review the code, saving time.
+
+### General tooling
+
+Periodically and/or right before accepting code, the following kind of tools should take their turn:
+
+* Linter: Checking compliance over code conventions. Examples for such tools include _Checkstyle_, _Clang Format_, _Rubocop_ or _pep8_.
+* Dependency scanner:
+    * Vulnerabilities: Is there a package dependency in the project including discovered security vulnerabilities? This check can be carried out by code hosters (GitHub, GitLab) for any major package ecosystem, and also by some package managers alone (such as `npm`, or `mvn` with a plugin).
+    * Licenses: Is there a new package dependency, or a sub-dependency, that includes a License that is banned? It should also print a list of all involved licenses on demand.
+* Generic static code analysis (such as _SonarCube_, _go vet_ and _Clang Static Analyzer_):
+    * Can we identify possible bugs and smells, bad practices?
+    * Is there code that uses deprecatations or even insecure methods?
+* Test runners:
+    * Are all the tests still running, and running without errors?
+* Packagers (if applicable):
+    * Can we still produce running deployables?
+
+Another checklist, primarily designed for Open Source Project best practices, is the _CII Best Practices_ initiative, that you can self-certify when adhering to the [criteria](https://bestpractices.coreinfrastructure.org/en/criteria/0).
 
 ## Legals and Lawfuls
 
