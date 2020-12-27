@@ -1,4 +1,4 @@
-# The Generic Guide for Software Developers
+# The Guide to the Dirty Little Things in Software Development
 
 This guide is subject to the [Creative Commons License v4.0 BY, unported](https://creativecommons.org/licenses/by/4.0/).
 
