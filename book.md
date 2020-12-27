@@ -250,15 +250,16 @@ Technically, every program is an instance of an _algorithm_, and even the ones t
 For reasons of NIH, underestimation, skipping research or lack of awareness, people sometimes tend to solve problems on their own when they better should not. Even with being smart in algorithms and data, reality sometimes hits hard and makes you question the time you spend on certain topics. What we have recognized already:
 
 * Doing dates and calendars and times is hard,
-* Doing encoding and languages is hard,
-* Doing email addresses is hard and
-* Doing math is hard, and not by what people go through at school.
+* doing encoding and languages is hard,
+* doing email addresses is hard and
+* doing math is hard, and not by what people go through at school.
 
 A list of other real-world examples that look somewhat easy at a first glance, but are not:
 
-* Doing CSV is [hard](http://thomasburette.com/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/) 
-* Doing JSON is [hard](http://seriot.ch/parsing_json.php)
-* Doing HTTP cookies is [hard](https://tools.ietf.org/html/rfc2109) and got [harder](https://tools.ietf.org/html/rfc6265) (with updates pending)
+* Doing CSV is [hard](http://thomasburette.com/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/),
+* doing JSON is [hard](http://seriot.ch/parsing_json.php),
+* doing HTTP cookies is [hard](https://tools.ietf.org/html/rfc2109) and got [even harder](https://tools.ietf.org/html/rfc6265) (with updates pending) and
+* doing IP address parsing is [hard](https://blog.dave.tf/post/ip-addr-parsing/).
 
 For reasons of compatibility, performance and security &ndash; this cannot be stressed enough &ndash; always look for established solutions first. I had considered _doing XML is hard_ to be obvious for all my developer life, but even that did not stop a surprising amount of people from considering and even trying it on their own &ndash; and not as a private side-project.
 
