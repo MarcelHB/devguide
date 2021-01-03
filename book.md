@@ -849,6 +849,8 @@ I closely stick to features that are well-known to be available and used with `g
     * Profit:
         * No losing or rotting of branches, getting the right people to review the code, saving time.
 
+Also, if there is some broader or public interest in the project, consider maintaining manual changelogs that are structured, ordered and focused on what is new. It is never fun to dig through hundreds or thousands of (poorly) written commit and merge messages to get a general impression. Version guides with explanations, schemas or screenshots are even more appreciated by users and developers. If there are breaking changes, highlight them as such and provide migration instructions.
+
 ### General tooling
 
 Periodically and/or right before accepting code, the following kind of tools should take their turn:
