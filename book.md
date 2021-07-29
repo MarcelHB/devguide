@@ -461,7 +461,7 @@ A _surrogate key_ is a key that takes away a lof of burden of finding or constru
 Reasons to optionally have some secondary, unique, immutable and atomic key for public use instead of the surrogate key (like a UUID):
 
 * It prevents enumeration attacks.
-* It remains publicly stable even under migration or arcane desaster recovery strategies.
+* It remains publicly stable even under migration or arcane disaster recovery strategies.
 * A primary key may be implemented by a tree exclusively ([PostgreSQL](https://www.postgresql.org/docs/9.4/indexes-unique.html)), whereas a secondary key may be configured to be subject to a hash.
 * It is still easily addressable and can be backed by the underlying database by different means at little to no cost (uniqueness check, native UUID types and generations).
 
@@ -716,7 +716,7 @@ Details of definition and layering slightly vary by context, language or framewo
 * _Unit tests_ &ndash; The smallest pieces of executable code: methods, member methods, static portions. Expecting them to do what they are supposed to do locally.
 * _Integration tests_ &ndash; The combination of suitable units under controlled playbooks, also using underlying systems in a test mode (databases, file system, mock servers). Expecting assumptions to hold across units.
 * _System tests_ &ndash; The invocation of defined system interfaces, like invoking the executable and its parameters, opening network connections and doing HTTP requests or other interactions. Expecting well-defined specifications from the interaction level to be fulfilled.
-* _Acceptance tests_ or _End-to-end tests_ &ndash; Combining real-world interactions with a system for fulfilling the business case. Executing tests on the highest level of interaction, having a full-scale test setup underneath: UI interaction, workflow views over heterogeneous components, interactinge with remote services and hardware.
+* _Acceptance tests_ or _End-to-end tests_ &ndash; Combining real-world interactions with a system for fulfilling the business case. Executing tests on the highest level of interaction, having a full-scale test setup underneath: UI interaction, workflow views over heterogeneous components, interacting with remote services and hardware.
 
 Regardless of what kind of test level we are looking at, we can write tests by either knowing its implementation, or just by specifiying its expectations from an outsider's perspective:
 
@@ -758,13 +758,13 @@ Some further hints on testing:
 Hereby, we understand _project_ as the software-centered environment around a software product and its development, so the mentioned aspects should not be consued with _project_ as in _Project Management_ (the Gantt charts and stuff). Every non-private project, open or closed source, should be set up under the following assumptions:
 
 * There will be more than one person involved, or another person after you.
-* That somebody will start by little to no knowledge about the past, maybe also without any any knowledge about the current state.
+* That somebody will start by little to no knowledge about the past, maybe also without any knowledge about the current state.
 * That somebody will probably arrive by a blank setup, that is not what you likely need to get things running.
 * That somebody is biased and maybe needs to be kept away from the idea to _just rewrite it_ or _doing my own thing_ because the entry into the project is just frustrating, and not because there is an otherwise good reason to do so.
 
 ### README &ndash; no really, read me, but also write me
 
-When using GitHub, GitHub may show you projects, that may be of your interest. Sometimes, I click one of them because of the name, the main technology, or maybe just for curiosity and boredom. _Sometimes_ as in _way too much for my expectation_, I end up in a project and have little to no idea what this is about. While there is a `README` file, it is not helpful to an outsider in terms of understanding, but also leaves nothing but a heuristic assumption of how to get into it.
+When using GitHub, GitHub may show you projects that may be of your interest. Sometimes, I click one of them because of the name, the main technology, or maybe just for curiosity and boredom. _Sometimes_ as in _way too much for my expectation_, I end up in a project and have little to no idea what this is about. While there is a `README` file, it is not helpful to an outsider in terms of understanding, but also leaves nothing but a heuristic assumption of how to get into it.
 
 A `README` is part of the much larger environment of documentation, yet it serves a very important idea. Let us call it the _Principle of first touch documentation_ (PoFTD): What is it what we see on the root level of the software project? And more generally: What is it that I have _here_, no matter where I am in the hierarchy exactly? But let's start by a top-level `README` file:
 
@@ -898,7 +898,7 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
     * LGPL [v2.1](https://choosealicense.com/licenses/lgpl-2.1/), [v3](https://choosealicense.com/licenses/lgpl-3.0/): A weaker focus on copyleft than GPL, as it does not consider the use of dynamically linked code, i. e. it is still usable when stand-alone, as subject of falling under the same license. This is why some libraries subject to LGPL can be found in projects with incompatible licenses.
     * [Apache License v2.0](https://choosealicense.com/licenses/apache-2.0/): Grants a permissive use while requesting copyright notices and outline of changes to the source code. Grants patent use, but not warranties and liabilities.
     * [Mozilla Public License v2.0](https://choosealicense.com/licenses/mpl-2.0/): Grants a permissive use while requesting a file-based copyleft, i. e. disclosing changes to source code files that are subject to MPL. Grants patent use, but not warranties and liabilities.
-    * _Public domain_ &ndash; Publicly floating software, or so. A difficult topic since there is such thing in some jurisdictions. It is probably OK if the author(s) explicit state a public domain release or an equivalent one, but if there is no such credible statement, consider it taboo. A better alternative for software is the [CC0](https://choosealicense.com/licenses/cc0-1.0/) or [WTFPL](https://choosealicense.com/licenses/wtfpl/) for addressing the possible lack of _public domain_ regulations in an internationally acceptable way.
+    * _Public domain_ &ndash; Publicly floating software, or so. A difficult topic since there is such thing in some jurisdictions. It is probably OK if the author(s) explicitly state a public domain release or an equivalent one, but if there is no such credible statement, consider it taboo. A better alternative for software is the [CC0](https://choosealicense.com/licenses/cc0-1.0/) or [WTFPL](https://choosealicense.com/licenses/wtfpl/) for addressing the possible lack of _public domain_ regulations in an internationally acceptable way.
     * Everything else: There are lots of less common ones, so read the available texts or comments, at least. For any custom ones, well, read through.
 * Generally assume that the use of trademarks and patents is not granted unless explicitly stated. So do not use them until then.
 * _Software patents_ generally have a hard time around the world. It is more likely to face restrictive copyright agreements or coupling of trademark use granting for advertising.
