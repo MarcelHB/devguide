@@ -44,7 +44,7 @@ This a about economical moves and calculating risks to the degree a software dev
 * How is somebody keeping up to date with technological advancements and legal requirements? If any, what is the range of view beyond the own zone of comfort, and specialization?
 * What is the attitude towards doing mistakes? How is quality being evaluated when not being asked for protocols?
 
-When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration. This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good.
+When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration &ndash; that is subsumed in an [article](https://neverworkintheory.org/2021/08/29/software-development-waste.html) called _Software Development Waste_.This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good [annotation as of 2021: _Well, ..._].
 
 ### How to read, what to read
 
