@@ -44,7 +44,7 @@ This a about economical moves and calculating risks to the degree a software dev
 * How is somebody keeping up to date with technological advancements and legal requirements? If any, what is the range of view beyond the own zone of comfort, and specialization?
 * What is the attitude towards doing mistakes? How is quality being evaluated when not being asked for protocols?
 
-When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration &ndash; that is subsumed in an [article](https://neverworkintheory.org/2021/08/29/software-development-waste.html) called _Software Development Waste_.This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good [annotation as of 2021: _Well, ..._].
+When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration &ndash; that is subsumed in an [article](https://neverworkintheory.org/2021/08/29/software-development-waste.html) called _Software Development Waste_. This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good [annotation as of 2021: _Well, ..._].
 
 ### How to read, what to read
 
@@ -818,7 +818,7 @@ Help your users and developers to quickly adopt the project and to bring them on
 I closely stick to features that are well-known to be available and used with `git` version control. Every interesting, multi-collaborator project needs a bunch of policies to keep the degree of frustration low and management easy. For everything, of course, there is probably some kind of religion around it, but the core remains the same:
 
 * _Commits_: 
-    * Title: What did I do where? (Good: `FS: support for async I/O`, bad: `bugfix`, also [XKCD](https://xkcd.com/1296/))
+    * Title: What did I do where? (Good: `FS: support for async I/O`, bad: `bugfix`, also [xkcd](https://xkcd.com/1296/))
     * Body: 
         * When non-trivial, a _change_ rationale. (Good: `This fixes a race condition when ...`)
         * _Trace links_, such as a requirement ticket number, bugtracker ticket number, GitHub issue number.
