@@ -811,7 +811,7 @@ Two good examples include: [Rails guides](https://guides.rubyonrails.org/getting
 
 In contrast, look at how much _Spring_ [needs to tell you](https://docs.spring.io/spring-framework/docs/current/reference/html/) how little _you_ have to do for yourself (yes, there are dozens of _Getting Started_ [guides](https://spring.io/guides#getting-started-guides) taking 15-30 minutes _each_).
 
-Help your users and developers to quickly adopt the project and to bring them on the right path.
+Help your users and developers to quickly adopt the project and to bring them on the right path. [Here](https://daniel.haxx.se/blog/2021/09/04/making-world-class-docs-takes-effort/) is another manifest and high-level guide towards _world-class docs_ by the dev of _cUrl_ that I do not object.
 
 ### Code contribution management
 
