@@ -395,6 +395,14 @@ So even if you fully trust somebody, there is a stack of threats involved that d
 
 As a closing word: Consider every topic before and after this one as a subject to security as well: Any way to externally provoke a system to leave its functional state, causing a denial of service, is a matter of risk, thus a security concern. For a large overview and deeper insights of domain-specific attacks and security engineering, I recommend the book [Security Engineering](https://www.cl.cam.ac.uk/~rja14/book.html) by Anderson.
 
+Just another random collection of security issues that are part of every-day work, or somewhat good to have heard of:
+
+1. Generally do not pass or request plain credentials via command line arguments. On Linux, a call to `ps -aux` reveals that you can see processes and arguments across users, and you may not always know who exactly is sharing the OS with you. File paths into restricted folders are OK.
+1. A common alternative, passing credentials to processes by environment variables, does not suffer from this problem. But since it's so common, [malware can make a simple guess](https://www.bleepingcomputer.com/news/security/javascript-packages-caught-stealing-environment-variables/) where to hit-and-run. To reduce such a risk and raising the need for more individual exploits, using indirections (e. g. putting a file path into the environment variable instead) or using a designated credentials management API may be a suitable alternative.
+1. Do not put or load credentials for building steps (e. g. downloading stuff from a package hub) into a `Dockerfile`. Even when deleted afterwards, it remains in the previous layer image and may end up in the wrong hands. Use `build --secret` instead.
+1. This one is tricky: Even if you review source code thoroughly, it [may not be doing](https://www.lightbluetouchpaper.org/2021/11/01/trojan-source-invisible-vulnerabilities/) what it claims to do ([examples](https://github.com/nickboucher/trojan-source)). Invisible code obfuscation.
+1. When setting up an SSH daemon in an environment that is new to you, or that you don't fully recall, _always_ check its [authentication settings](https://www.howtoforge.com/set-up-ssh-with-public-key-authentication-debian-etch) first. And when exposed to the web, people from all over the world will try to get in by using weak or default credentials. On Linux, [fail2ban](https://github.com/fail2ban/fail2ban) is happy to help on a small-to-medium scale.
+
 ## Databases
 
 They are omnipresent, or what a friend once said: _Damn, you always end up with a database._ Whether it be you transactional ground, your large scale analytics, or just maintaining some local meta data, why write this on your own if there is probably a convenient solution available already?
