@@ -319,7 +319,7 @@ Ok, people have come up with more formal concepts and established resources on I
 * [ISO/IEC 27002](https://www.iso.org/obp/ui/#iso:std:iso-iec:27002:ed-2:v1:en) (excerpt): Probably everything you need to formally know about IT security.
 * [CVE](https://cve.mitre.org/cve/search_cve_list.html) (Common Vulnerabilities and Exposures): A database to refer to disclosed security incidents by some _CVE number_. It is one such database among others (_security advisory databases_) but it is likely the most common one to use when looking for vulnerabilities in IT products.
 
-There are many concepts a software engineer needs to know when remotly touching topics subject to security:
+There are many concepts a software engineer needs to know when remotly touching topics subject to security ([here is a guide](https://joyofcryptography.com/) for discussions and details on the math behind the following):
 
 * _Cryptographic hash functions_: While a _hash function_ maps data into a fixed range of values, _cryptographic hash functions_ do the same while matching some security requirements:
   * There is no known way to produce collisions, and finding some is infeasibly expensive by brute force.
