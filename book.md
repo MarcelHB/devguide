@@ -402,6 +402,7 @@ Just another random collection of security issues that are part of every-day wor
 1. Do not put or load credentials for building steps (e. g. downloading stuff from a package hub) into a `Dockerfile`. Even when deleted afterwards, it remains in the previous layer image and may end up in the wrong hands. Use `build --secret` instead.
 1. This one is tricky: Even if you review source code thoroughly, it [may not be doing](https://www.lightbluetouchpaper.org/2021/11/01/trojan-source-invisible-vulnerabilities/) what it claims to do ([examples](https://github.com/nickboucher/trojan-source)). Invisible code obfuscation. Anyway, a very comprehensive guide to review source code with respect to security is [given by OWASP](https://owasp.org/www-project-code-review-guide/assets/OWASP_Code_Review_Guide_v2.pdf).
 1. When setting up an SSH daemon in an environment that is new to you, or that you don't fully recall, _always_ check its [authentication settings](https://www.howtoforge.com/set-up-ssh-with-public-key-authentication-debian-etch) first. And when exposed to the web, people from all over the world will try to get in by using weak or default credentials. On Linux, [fail2ban](https://github.com/fail2ban/fail2ban) is happy to help on a small-to-medium scale.
+1. If you are interested how an application is affected by AV interferences, you can experiment safely with an [EICAR test file](https://www.eicar.org/?page_id=3950).
 
 ## Databases
 
