@@ -280,6 +280,7 @@ Without input and output operations, there was only little practical software. T
 * Have a timeout whereever you do not want to wait forever, and also think of a proper handling when elapsed. Socket-based I/O often suffers from hanging indefinitely, blocking allocations, when done improperly in exceptional circumstances. Sometimes, foreign code has biting default settings. Do a proper research first, especially when talking to endpoints outside of your domain.
 * Remember: the slower the I/O channel, the bigger the advantage of a CPU compressing and decompressing data. This is [why we use compression](https://www.pingdom.com/blog/can-gzip-compression-really-improve-web-performance/) in HTTP servers, also for dynamic responses.
 * Close all the handles when done, and mind the exceptions or error cases. Handles usually represent operating system allocations that are otherwise exhausted eventually while the process continues running.
+* On some systems, it is easy to test _no space left on device_ behavior as they expose a dummy device for this purpose. On Linux, there is not only `/dev/null` for redirecting data into the void, there is also `/dev/full` to simulate a disk without space.
 
 ### Streaming
 
