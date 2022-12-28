@@ -229,6 +229,7 @@ Some further remarks on working with data structures:
 * If you have a hard-coded, static data array with a need of dynamic lookups, think of a way to meaningfully sort it at the time of writing. It not only makes resolution easier when merging conflicting changes, it may qualify for [binary search](https://en.wikipedia.org/wiki/Binary_search_algorithm) lookups without asking for additional costs for setup at runtime.
 * When working with multiple, concurrent modifiers on an instance of a data structure, an easy approach to prevent corruption is locking. Sometimes, environments already ship _synchronized_ data structures or even _lock free_ structures (like queues, since they matter a lot in such a scenario). Make use of them for both saving code, and maybe even benefiting from increased performance.
 * If you feel that managing your application's _local_ data gets out of hand by data dimension, look up techniques, update patterns, lack of flexibility and persistence questions, consider [SQLite](https://www.sqlite.org/index.html), it does [not even need](https://www.sqlite.org/inmemorydb.html) a file on a disk and is also available on mobile operating systems. When working inside of a browser, _WebSQL_ is currently a restricted option among [some other ones](https://www.html5rocks.com/en/features/storage).
+* A [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) is a nice thing that is often guarding other data structures (sets and maps): Every item that goes in touches its bits according to some hash function. Now, when checking for some item for its presence, the bloom bits tell us: _Yeah, maybe_ or _definitely not_. Latter case helps preventing exhausting lookups.
 
 ### Algorithms
 
@@ -355,8 +356,8 @@ If someone was able to create a payload with a hash collision, the signature wou
 * So when designing certain security related processes, stick to the established ones:
     * Communication: use TLS v1.2, implemented by libraries such as _GnuTLS, OpenSSL, Microsoft SChannel_
     * (A)symmetric data encryption, signatures: [choose](https://en.wikipedia.org/wiki/Comparison_of_cryptography_libraries) from a fitting library or consult your environment's manual
-    * Hashing: _SHA256_
-    * Hashing of passwords: _bcrypt_
+    * Hashing: _SHA3_ or _BLAKE3_
+    * Hashing of passwords: _bcrypt_ or _scrypt_
     * Randomness: look what library supports _pseudorandom number generators_
 * Keep an eye on what cryptography got into press for being cracked, flawed or considered too weak for near-future hardware. [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0) and [WEP](https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Weak_security) broke many, many years ago already. MD5 and SHA1 hashes are [considered weak](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms). And [MD4 is an example](https://en.wikipedia.org/wiki/MD4#MD4_collision_example) of a broken hash mechanism.
 * You may, of course, use weaker hash functions or RNGs (such as `Math.random` in JavaScript, or `rand` in C) but do not when security and money are at stake.
@@ -629,6 +630,17 @@ Looking at the list of _diagrams_ of the previous section, UML provides a lot of
 * Know the [sequence diagrams](https://en.wikipedia.org/wiki/Sequence_diagram).
 * Look at the remaining collection of diagrams if you are lacking creativity or need formalisms.
 * Make use of more UML, and stick to all the conventions (instead of using custom formats), the less you know who is about to depend on interfaces and behaviors outside of your scope: interface users, your future but unknown coworkers, manual readers.
+
+### Modelling toolsets
+
+Sometimes, we need handy tools to model data procedurally. Fortunately, there are plenty of math functions or algorithms that help us. Here, we do not target precision, correctness or security, but performance and ease. Let's never forget the following (as usual, there is more than library readily available):
+
+* Oscillation &ndash; having values that go back and forth periodically: _sine_ function.
+* Smooth peaks: Using the _probability density function_ of a [Normal distribution](https://en.wikipedia.org/wiki/Normal_distribution) &ndash; generally, have a look at distributions for their variety.
+* Software random values: [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_Twister)
+* Seemingly random values that go through a range without repetition: [Feistel permutation](https://medium.com/codezest/pseudorandom-permutation-using-a-feistel-network-48b617dd8c1)
+* Smooth randomness in higher dimensions (e. g. for generating a terrain map): [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise) or [Simplex noise](https://catlikecoding.com/unity/tutorials/pseudorandom-noise/simplex-noise/)
+* Hashing something quickly (e. g. for generating a key out of data): [MurmurHash](https://en.wikipedia.org/wiki/MurmurHash)
 
 ### General ideas
 
