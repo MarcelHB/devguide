@@ -359,7 +359,7 @@ If someone was able to create a payload with a hash collision, the signature wou
     * Hashing: _SHA3_ or _BLAKE3_
     * Hashing of passwords: _bcrypt_ or _scrypt_
     * Randomness: look what library supports _pseudorandom number generators_
-* Keep an eye on what cryptography got into press for being cracked, flawed or considered too weak for near-future hardware. [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0) and [WEP](https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Weak_security) broke many, many years ago already. MD5 and SHA1 hashes are [considered weak](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms). And [MD4 is an example](https://en.wikipedia.org/wiki/MD4#MD4_collision_example) of a broken hash mechanism.
+* Regardless, keep an eye on what cryptography got into press for being cracked, flawed or considered too weak for near-future hardware. [SSL](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0) and [WEP](https://en.wikipedia.org/wiki/Wired_Equivalent_Privacy#Weak_security) broke many, many years ago already. MD5 and SHA1 hashes are [considered weak](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms). And [MD4 is an example](https://en.wikipedia.org/wiki/MD4#MD4_collision_example) of a broken hash mechanism.
 * You may, of course, use weaker hash functions or RNGs (such as `Math.random` in JavaScript, or `rand` in C) but do not when security and money are at stake.
 
 Let us do not forget _all input is evil_:
@@ -641,6 +641,7 @@ Sometimes, we need handy tools to model data procedurally. Fortunately, there ar
 * Seemingly random values that go through a range without repetition: [Feistel permutation](https://medium.com/codezest/pseudorandom-permutation-using-a-feistel-network-48b617dd8c1)
 * Smooth randomness in higher dimensions (e. g. for generating a terrain map): [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise) or [Simplex noise](https://catlikecoding.com/unity/tutorials/pseudorandom-noise/simplex-noise/)
 * Hashing something quickly (e. g. for generating a key out of data): [MurmurHash](https://en.wikipedia.org/wiki/MurmurHash)
+* Modelling and combining geometry: [Signed distance functions](https://www.alanzucconi.com/2016/07/01/signed-distance-functions/) ([some collection](https://www.youtube.com/@InigoQuilez/videos) to broad mathematical modelling)
 
 ### General ideas
 
