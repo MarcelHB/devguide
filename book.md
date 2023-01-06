@@ -642,6 +642,7 @@ Sometimes, we need handy tools to model data procedurally. Fortunately, there ar
 * Smooth randomness in higher dimensions (e. g. for generating a terrain map): [Perlin noise](https://en.wikipedia.org/wiki/Perlin_noise) or [Simplex noise](https://catlikecoding.com/unity/tutorials/pseudorandom-noise/simplex-noise/)
 * Hashing something quickly (e. g. for generating a key out of data): [MurmurHash](https://en.wikipedia.org/wiki/MurmurHash)
 * Modelling and combining geometry: [Signed distance functions](https://www.alanzucconi.com/2016/07/01/signed-distance-functions/) ([some collection](https://www.youtube.com/@InigoQuilez/videos) to broad mathematical modelling)
+* Predictably walking around on a surface or volume with the impression of locality: [Z-order curves](https://en.wikipedia.org/wiki/Z-order_curve)
 
 ### General ideas
 
