@@ -746,8 +746,8 @@ Details of definition and layering slightly vary by context, language or framewo
 Regardless of what kind of test level we are looking at, we can write tests by either knowing its implementation, or just by specifiying its expectations from an outsider's perspective:
 
 * _White-box tests_ &ndash; The implementation is known with respect to execution paths of the underlying code or programs, and in the knowledge of characteristics of the implementing system (like testing for/against a desired/unwanted configuration setting).
-* _Black-box tests_ &ndash; Roughly, when having a certain input, a certain result is expected as an outcome, regardless if powered by a quantum machine or [The Turk](https://en.wikipedia.org/wiki/The_Turk).
-* _Gray-box tests_ &ndash; What comes out if the writer of black-box tests is the same person as the one writing the implementation, mostly in terms of looking for suitable test inputs.
+* _Black-box tests_ &ndash; Roughly, when having a certain input, a certain result is expected as an outcome, regardless if powered by a quantum machine or [The Mechanical Turk](https://en.wikipedia.org/wiki/Mechanical_Turk).
+* _Gray-box tests_ &ndash; A blend of both ends, like expecting a particular use (white-box) of an injected dependency (black-box).
 
 White-box testing is subject to some controversy, usually when it comes _... but the coverage! It just dropped._ Well:
 
