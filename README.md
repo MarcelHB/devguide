@@ -1,19 +1,19 @@
 # The Guide to the Dirty Little Things in Software Development
 
-This guide is subject to the [Creative Commons License v4.0 BY, unported](https://creativecommons.org/licenses/by/4.0/).
+This guide is subject to the [Creative Commons License v4.0 BY, unported](https://creativecommons.org/licenses/by/4.0/), started in 2020.
 
-## Preface 
+## Preface
 
 ### We, the people
 
-Everyone is biased, I am and so are you. The bias in the role of a software engineer is shaped by a wide range of factors: 
+Everyone is biased, I am and so are you. The bias in the role of a software engineer is shaped by a wide range of factors:
 
 * The initial motive in life that eventually brought you here,
 * the degree of formal education of this topic,
 * your previous fields of engineering and products,
 * your colleagues, [bosses](https://getlighthouse.com/blog/people-leave-managers-not-companies/), clients.
 
-Ever discussed the absurdly prominent example of _tabs vs. spaces_? Given the [financial correlation](https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/), you better do &ndash; yet it is just one of the sheer amount of things that ask for a common ground among you and the people around you.
+Have you ever discussed the absurdly prominent example of _tabs vs. spaces_? Given the [financial correlation](https://stackoverflow.blog/2017/06/15/developers-use-spaces-make-money-use-tabs/), you better do &ndash; yet it is just one of the sheer amount of things that ask for a common ground among you and the people around you.
 
 Looking at the list above, you and me probably need to have subjects of discussion settled, and better early than late. Let me draw a few contexts first, because this turns out to make a significant difference in certain aspects. The most important one: On what basis do we justify a guide like this one?
 
@@ -44,15 +44,15 @@ This a about economical moves and calculating risks to the degree a software dev
 * How is somebody keeping up to date with technological advancements and legal requirements? If any, what is the range of view beyond the own zone of comfort, and specialization?
 * What is the attitude towards doing mistakes? How is quality being evaluated when not being asked for protocols?
 
-When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration &ndash; that is subsumed in an [article](https://neverworkintheory.org/2021/08/29/software-development-waste.html) called _Software Development Waste_. This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good [annotation as of 2021: _Well, ..._].
+When not aligned or guided properly, a team of software engineers may easily face misunderstandings, conflicts, delays, frustration &ndash; that is subsumed in an [article](https://neverworkintheory.org/2021/08/29/software-development-waste.html) called _Software Development Waste_. This, in turn, translates straight into time-to-market, or worse, disaster recovery and bad press. Unless it is _Cyberpunk 2077_, then delay is probably good [update as of 2021: _Well, ..._].
 
 ### How to read, what to read
 
 Let us write some software. Let us be done in time. Let us save resources, economically and &ndash; where possible &ndash; ecologically. Let us just not be guys that appear in press for failing miserably over beginner's mistakes. And here, I want to make sure we just get there well &ndash; on one or another way.
 
-I expect you to know something about software development, hands-on. This is not some guide for replacing some fundamental education, there is [literature](https://bigmachine.io/products/the-imposters-handbook/) for that. This for filling all the dirty little stuff you may have ignored so far, you may not be aware of, and that is mostly taught by experience and failure.
+I expect you to know something about software development, hands-on. This is not some guide for replacing some fundamental education, there is [literature](https://bigmachine.io/products/the-imposters-handbook/) for that. This one is for filling all the dirty little stuff you may have ignored so far, you may not be aware of, and that is mostly taught by experience and failure.
 
-I have assembled a collection of technical topics and organizational guidelines, I will go into details or put a link to a useful and comprehensive reference. There will be inline examples or examples of implementations or products. **None** of these are meant to be as an advertisement in a sense that I get any affiliation link money or alike, they are a product of hands-on experience, knowledge, neutral (i. e. using Google) research and browsing news aggregators. Over time, of course, they may also lapse and be superseded by other standards, products, practices.
+In 2020, I have started assembling a collection of technical topics and organizational guidelines, I will go into details or put a link to a useful and comprehensive reference. There will be inline examples or examples of implementations or products. **None** of these are meant to be as an advertisement in a sense that I get any affiliation link money or alike, they are a product of hands-on experience, knowledge, neutral (i. e. using Google) research and browsing news aggregators. Over time, of course, they may also lapse and be superseded by other standards, products, practices.
 
 You may argue of missing some in-depth or more comprehensive information on very closely related fields here, such as security, networks, team leadership. This is true and I strongly recommend to have designated literature on these topics for both broader and deeper insights, as some simply go beyond this scope. Again, literature choice is based purely on personal recommendation.
 
@@ -70,7 +70,7 @@ In the United States, you may be particularly familiar with the concept of [post
 
 * [Murphy's Law](https://en.wikipedia.org/wiki/Murphy%27s_law) &ndash; The most prominent one, yet I probably found most of the managers working far away from domains of potentially deadly problems keeping it low to a worrisome degree. _Anything that can go wrong, will go wrong._ Modifications include: _... to the worst extent/time possible._ or _... in the worst chain of combinations._ If you see something that is about to go wrong at some time, it will, and earlier than pessimistically estimated. Leaving a password for user `root` set to `root` is an invitation to Murphy, for example.
 * _At scale, there is no edge case_ &ndash; A slightly more neutral form of Murphy. If you observed that edge case X happens about every few Y, scale up Y, and read the law of Murphy again. The economist wants to have costs and likelihoods here, so really spend some time modeling your nasty edge case's impact.
-* [Gall's law](https://en.wikipedia.org/wiki/John_Gall_%28author%29%23Gall%27s_law) &amp; [KISS](https://en.wikipedia.org/wiki/KISS_principle) &ndash; In a way to put it short: Do not enter the stage of over-engineering, i. e. designing for features you are not sure about to ever see their requirement at the horizon when it comes to your task. 
+* [Gall's law](https://en.wikipedia.org/wiki/John_Gall_%28author%29%23Gall%27s_law) &amp; [KISS](https://en.wikipedia.org/wiki/KISS_principle) &ndash; In a way to put it short: Do not enter the stage of over-engineering, i. e. designing for features you are not sure about to ever see their requirement at the horizon when it comes to your task.
 * [Hofstadter's Law](https://en.wikipedia.org/wiki/Hofstadter%27s_law) &ndash; Hey, somebody made a cool and recursive law out of estimation meetings. The more important point I found is that you think twice to estimate more closely to what looks feasible, not by what appeals to the guys with money. There lies no profit in underestimation, but everyone is happy when you actually over-perform the estimations.
 * [Hanlon's razor](https://en.wikipedia.org/wiki/Hanlon%27s_razor) as an instance of [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) &ndash; While this is nowhere limited to the domain of software engineering, it frequently helped soothing the own nerves: Nobody probably ever wrote a _historically grown_ dump of code and processes from hell to deliberately cause anger to _you_. Instead, _they_ likely did not knew better, did not care so much, did not understand somewhere in between (Hanlon) or just made a reasonable economic decision not to touch a running mess of a system for the need of extension (Occam). Feeling angry about what you face is OK, but please refrain from doing so over what is likely the wrong reason.
 * _Not invented here (NIH)_ &ndash; In any remotely mature software development environment, there is probably at least one actively maintained, well-tested, sufficiently documented, StackOverflow'd software product for every common problem since the day ALGOL60 went to see the light. The same holds for best-practices of human and/or technological processes. Google is one of your friends, and your advocate when an NIH-susceptible guy fantasizes on inventing unseen security measurements. Of course, the inverse of NIH also found its name: _proudly found elsewhere_.
@@ -119,12 +119,12 @@ Let us head over to the issue of textual representations:
 
 Primitive types usually refer to what can be used straight by the processor, without going through runtime indirections first, such as _run-time type information_ (RTTI) or memory offsetting. A language may expose them as such &ndash; or at least pretend to so &ndash; (C, Java, Rust, Go), it may need some special workaround (Javascript _asm.js_ and _typed arrays_) or restricts the user to its boxing mechanisms (Ruby).
 
-* There are integer types, their bit patterns reflect the binary representation of some integer. They may be considered _signed_ or _unsigned_, sacrificing one bit in the first case. Depending on their size, they are referred to as 
-    * _bytes_ or _chars_ (1 byte), 
-    * _shorts_ or _words_ (2 bytes), 
+* There are integer types, their bit patterns reflect the binary representation of some integer. They may be considered _signed_ or _unsigned_, sacrificing one bit in the first case. Depending on their size, they are referred to as
+    * _bytes_ or _chars_ (1 byte),
+    * _shorts_ or _words_ (2 bytes),
     * _ints_ or _double-words_ (4 bytes) and
     * _longs_ or _quad-words_ (8 bytes).
-* If the language requires you to think about that, do so and pick what is available and appropriate, for every single occurrence. Do you need a sign? Do you need 8 byte integers when some other restriction renders everything beyond one byte into a waste of space? 
+* If the language requires you to think about that, do so and pick what is available and appropriate, for every single occurrence. Do you need a sign? Do you need 8 byte integers when some other restriction renders everything beyond one byte into a waste of space?
 * If primitive types are defined to have some soft constraints, such as _X is at least 4 bytes wide, depending on the target platform_, do stick to the fixed-sizes alternatives when available unless there is a very good reason not to do so (mostly: old compilers for very old platforms).
 * For counters, use the largest integer unless there is really no need to do so.
 * There may exist a _size_ type. It refers to an integer that with as many bytes as the target-platform uses for its memory addressing. On most modern desktop and server processors it is 64 bits (8 bytes), and some mobile and older processors its 32 bits. Size types are usually meant to be used in the context of contiguous memory span calculations.
@@ -167,13 +167,13 @@ This is what the Os help you express, very shortly spoken. [Big-O or Landau nota
 * Writing Os, usually constant offsets and factors are left out. They have a huge practical relevance but are not required for classifying the cost growing nature.
 * In a sum of components that contribute to the cost, often only the dominating one presented, e. g. `O(N^2 + N)` is to be seen as `O(N^2)`.
 * When there are more elements involved, like a problem referring to `N` guests arriving in `M` cars, they may co-dominate the cost and the O looks like `O(growth(M) * growth(N))` then.
-* There is more than just _the_ O. O means: your problem grows not more expensively than what is described inside; but also Θ (the same), Ω (more or equally expensive), ω (definitely more expensive), o (definitely less expensive). Most of the time, we are happy with an O and something giving an idea, without the need for academic precision.  
+* There is more than just _the_ O. O means: your problem grows not more expensively than what is described inside; but also Θ (the same), Ω (more or equally expensive), ω (definitely more expensive), o (definitely less expensive). Most of the time, we are happy with an O and something giving an idea, without the need for academic precision.
 
 But there are other relevant considerations that sometimes require more than just a single O.
 
 Looking at our thievish party host, we change the pick-pocketing difficulty a bit: There is only one guest carrying a valuable thing. In the best case, the worst case, and the random case, how many guests does the thief need to _treat_ until finding what he is looking for?
 
-* Best case: The first one is a hit,  
+* Best case: The first one is a hit,
 * Worst case: The last one of all the guests is a hit, so I takes `N` actions.
 * Random case: By the [law of large numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers) (I'm sure I'm getting this wrong, I never got statistics much), the expected success is around of doing half of the guests &ndash; and this depends on `N` again.
 
@@ -207,7 +207,7 @@ Data structures are our air to breathe, but using the fanciest ones out there ma
 
       Does the pressure justify sacrificing convenience over performance? A dynamic, key-based lookup is nice and flexible but a static, index-based one saves more time, and hard-wired accesses even more.
 * [Principle of locality](https://en.wikipedia.org/wiki/Locality_of_reference): If you need data together and fast, make it neighbours. This holds true for both a single computer as well as network architectures. The more related data fits into the different layers of a CPU (core) cache at once, the less cache-misses occur on subsequent uses, reducing the overall wait time for data to be loaded from main memory. It may also reduce the risk for intra-process paging towards a comparably slow hard disk. Thinking of an unoptimized, ordinary network, the constant need to ask for data from _far away_ involves round trip times of milliseconds and bandwidths that are lower than what your disk controller offers.
-  
+
 These are fundamentals when thinking of data structures and computer memory for most of the known data structures being an instance of either one, or allowing to be built on top of both of them, depending on the constraints:
 
 * _Contiguous memory_: One item is supposed to be located right after the previous one, physically. There may be a disinction between static arrays, the ones that have a fixed size at compile time, and dynamic arrays (also _vectors_) that can shrink and grow. Actually, this may not be case: If the subsequent memory is reserved already, moving the memory is required first, so requesting a new memory location and moving the items. While its read and write access is constant, growing size modifications should be kept low or made upfront. Best suits: index based read and write accesses on largely stable sizes. Consider a deletion of items inbetween as unsetting of items, as it may otherwise lead to more expensive contraction operations.
@@ -373,7 +373,7 @@ Let us do not forget _all input is evil_:
     * using it in shell arguments (injection attack),
     * using it in the evaluation of interpreted languages (injection attack),
     * using it in file names and paths (directory traversal and [denial of service](https://tldp.org/HOWTO/Secure-Programs-HOWTO/file-names.html) attack).
-* Regular expressions are the first (but not the ulimate) choice of input validation for many cases. That is OK, but do not forget to properly address upcase and downcase, start and end of string, single and global application, EOL handling and encoding. Poor bugs have resulted from failures here. 
+* Regular expressions are the first (but not the ulimate) choice of input validation for many cases. That is OK, but do not forget to properly address upcase and downcase, start and end of string, single and global application, EOL handling and encoding. Poor bugs have resulted from failures here.
 * _Fuzzing tests_ are your best friend when trying to stress your counter-measures.
 * Inserting an emoji icon is the second best test to check your input handling.
 * Both the application of poorly-written regular expressions as well as input-based ones can take your system down, as it [did at Cloudflare once](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/). Be sure not to write ping-ponging greedy matchers following each other. Again, consider a grammar over regular expressions also for security concerns.
@@ -544,14 +544,14 @@ By the way:
 Depending on your organization, requirements will rain down in different forms: Less formal when discussing internal tools to boost some department's productivity, highly formal when working with a customer. _Requirements elicitation_ is a huge topic on its own, asking for a distinct group of people, requirement engineers. I assume that, in whatever way, we have somebody having done this for us here.
 
 * It may not appear feasible for every software developer to read the (whole) requirement documents. Make sure to have at least two people reading these documents completely, synchronizing each other afterwards
-* Make sure to present or refresh a customer, the business domain, the problem at large, systems you will depend on, 3rd party components, targetted milestones and schedules to every software developer as a whole. 
+* Make sure to present or refresh a customer, the business domain, the problem at large, systems you will depend on, 3rd party components, targetted milestones and schedules to every software developer as a whole.
 * While developers often like to discuss and negotiate about the requirements imposed by some shareholder, it is sometimes just a waste of time. Something may sound stupid, and it maybe is, indeed. Yet you must focus on an _intrinsic_ test of the requirements:
     * Are there any obvious gaps?
     * Are there any evident contradictions?
     * Are there conflicts to some existing setup left unaddressed?
     * Is the shareholder fully aware of constraints that are imposed by some third party? Is some API not offering what the customer requests?
     * Is every topic of ISO 25010 (non-functional requirements) addressed?
-One common misunderstanding that I have observed in agile teams: There is _always_ an initial set of requirements that somebody is going to pay for, or that is required to go into production, and failing to look at _that_ set completely, or simply ignoring (_backlogging_) parts of it as one tends to do in later stages, puts developers at risk to do decisions that do not pay off &ndash; while you must refrain from over-engineering (things you have no clue about if they ever come), do not start by shooting yourself in the feet if you know that a journey is longer than your body height.  
+One common misunderstanding that I have observed in agile teams: There is _always_ an initial set of requirements that somebody is going to pay for, or that is required to go into production, and failing to look at _that_ set completely, or simply ignoring (_backlogging_) parts of it as one tends to do in later stages, puts developers at risk to do decisions that do not pay off &ndash; while you must refrain from over-engineering (things you have no clue about if they ever come), do not start by shooting yourself in the feet if you know that a journey is longer than your body height.
 In software management courses, [you are probably](https://www.researchgate.net/publication/221440391_Successful_software_project_and_products_An_empirical_investigation/link/0c96052d424d188171000000/download) told that software project success largely depends on clear and stable requirements, and having an understanding of the problem's domain. Act like you have been told that.
 
 First, let us collect the things we are usually interested in visualizing around software:
@@ -721,7 +721,7 @@ Over the time, I found the the question _Is it designed well?_ equivalent to _Ca
 * How to actually use it? How does input look like?
 * Interaction of components by isolating errors and regression errors vertically (it looks good up to _that_ layer of code) and horizontally (we have messed up working on _these_ inputs).
 
-If something helps us understanding setup, use and blast radius more easily by looking at smaller, dedicated code snippets, we can judge the design for being good. Our holy abstract-factory pattern alone will not help much here, I have seen such things to be completely out of ease for testing. 
+If something helps us understanding setup, use and blast radius more easily by looking at smaller, dedicated code snippets, we can judge the design for being good. Our holy abstract-factory pattern alone will not help much here, I have seen such things to be completely out of ease for testing.
 
 Whatever we test, testing always challenges two design aspects:
 
@@ -842,9 +842,9 @@ Help your users and developers to quickly adopt the project and to bring them on
 
 I closely stick to features that are well-known to be available and used with `git` version control. Every interesting, multi-collaborator project needs a bunch of policies to keep the degree of frustration low and management easy. For everything, of course, there is probably some kind of religion around it, but the core remains the same:
 
-* _Commits_: 
+* _Commits_:
     * Title: What did I do where? (Good: `FS: support for async I/O`, bad: `bugfix`, also [xkcd](https://xkcd.com/1296/))
-    * Body: 
+    * Body:
         * When non-trivial, a _change_ rationale. (Good: `This fixes a race condition when ...`)
         * _Trace links_, such as a requirement ticket number, bugtracker ticket number, GitHub issue number.
     * Convention examples: [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), [Semantic commit messages](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716).
@@ -858,7 +858,7 @@ I closely stick to features that are well-known to be available and used with `g
 * _Branches_:
   * Naming: It's never wrong to have a name that helps recovery after forgetting a branch after a while. It's quite common to also include a trace link, such as `issue-123_mac_performance`.
   * Semantics: What branches do you need (version lines, customer lines), for what kind of development (milestones, features, bug fixes)?
-  * Updating: How and when to pull updates from its origin into the branch? 
+  * Updating: How and when to pull updates from its origin into the branch?
   * Merging: _squashing_ (all commits collapse into one), _merging_ (makes the history look like tracks and switches) or _rebasing_ (linearizing the history)?
   * Convention examples: [Git flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/), [Linux](https://www.kernel.org/doc/html/latest/process/2.Process.html).
   * Generally good ideas:
@@ -914,7 +914,7 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
 * When contributing to an open source software project while at work, even a minor bugfix, and it requires the contribution to be subject to a certain license for being accepted, make sure you got an OK by your employer first.
 * At an early point, ask your employer what libraries and programs are actively being shipped to the world, what is exclusively part of internal services and tools. Ask for license policies, like cleared and [banned ones](https://opensource.google/docs/using/agpl-policy/). If nobody has a clue what you actually want by that, you probably got yourself a new job: A client or compliance person will eventually have questions.
 * If there are specialized people in your organization for contracts, laws and licenses, it may be the best &ndash; or only &ndash; option to get a clearance from them per license type or individual software. But this should not stop you from reading this section at all.
-* Open source software matters, and so do the license models. [Have some statistics](https://resources.whitesourcesoftware.com/blog-whitesource/top-open-source-licenses-trends-and-predictions) and [some synposis](https://choosealicense.com/appendix/). 
+* Open source software matters, and so do the license models. [Have some statistics](https://resources.whitesourcesoftware.com/blog-whitesource/top-open-source-licenses-trends-and-predictions) and [some synposis](https://choosealicense.com/appendix/).
 * Know the distinction between licenses that cover software (for its dual form of source and binary state, warranties, liabilities, patents) and _asset licenses_ that addresses non-software creative work, data and documentation.
 * To mention the major OSS licenses &ndash; and _just to outline them roughly_ (this is not a replacement for legal counselling):
     * [1](https://opensource.org/licenses/BSD-1-Clause), [2](https://choosealicense.com/licenses/bsd-2-clause/), [3](https://choosealicense.com/licenses/bsd-3-clause/)-clause BSD, [MIT](https://choosealicense.com/licenses/mit/), [ISC](https://choosealicense.com/licenses/isc/): Use how you like to do, but obey where the authors want to see their copyright notice in distributions. No patent grant, warranties, liabilities.
