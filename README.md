@@ -73,7 +73,7 @@ In the United States, you may be particularly familiar with the concept of [post
 * [Gall's law](https://en.wikipedia.org/wiki/John_Gall_%28author%29%23Gall%27s_law) &amp; [KISS](https://en.wikipedia.org/wiki/KISS_principle) &ndash; In a way to put it short: Do not enter the stage of over-engineering, i. e. designing for features you are not sure about to ever see their requirement at the horizon when it comes to your task. 
 * [Hofstadter's Law](https://en.wikipedia.org/wiki/Hofstadter%27s_law) &ndash; Hey, somebody made a cool and recursive law out of estimation meetings. The more important point I found is that you think twice to estimate more closely to what looks feasible, not by what appeals to the guys with money. There lies no profit in underestimation, but everyone is happy when you actually over-perform the estimations.
 * [Hanlon's razor](https://en.wikipedia.org/wiki/Hanlon%27s_razor) as an instance of [Occam's razor](https://en.wikipedia.org/wiki/Occam%27s_razor) &ndash; While this is nowhere limited to the domain of software engineering, it frequently helped soothing the own nerves: Nobody probably ever wrote a _historically grown_ dump of code and processes from hell to deliberately cause anger to _you_. Instead, _they_ likely did not knew better, did not care so much, did not understand somewhere in between (Hanlon) or just made a reasonable economic decision not to touch a running mess of a system for the need of extension (Occam). Feeling angry about what you face is OK, but please refrain from doing so over what is likely the wrong reason.
-* _Not invented here (NIH)_ &ndash; In any remotely mature software development environment, there is probably at least one actively maintained, well-tested, sufficiently documented, StackOverflow'd software product for every common problem since the day ALGOL60 went to see the light. The same holds for best-practices of human and/or technological processes. Google is one of your friends, and your advocate when an NIH-susceptible guy fantasizes on inventing unseen security measurements.
+* _Not invented here (NIH)_ &ndash; In any remotely mature software development environment, there is probably at least one actively maintained, well-tested, sufficiently documented, StackOverflow'd software product for every common problem since the day ALGOL60 went to see the light. The same holds for best-practices of human and/or technological processes. Google is one of your friends, and your advocate when an NIH-susceptible guy fantasizes on inventing unseen security measurements. Of course, the inverse of NIH also found its name: _proudly found elsewhere_.
 * _Everyone makes mistakes_ &ndash; Somebody rejecting the claim is to be considered suspicious. We all make them, some of them go unnoticed and some of them cost lives. The reasons include wrong assumptions, missing knowledge, misunderstandings, the wrong calculation of risk and a lack of focus. And similar to fire, collapsing bridges and crashing planes, we need to learn and establish mechanisms to catch them as broadly and as early as possible. In the European Union, every country needs to maintain an agency to perform investigations in accidents regarding naval vessels, trains and air planes, with their reports mostly being published online (examples for [Germany](https://www.eisenbahn-unfalluntersuchung.de/SiteGlobals/Forms/Suche/Untersuchungsberichtesuche/Untersuchungsberichtesuche_Formular.html), [UK](https://www.gov.uk/raib-reports?report_type%5B%5D=investigation-report)). Read some of such reports by example, and see how and why mistakes are presumed to have been made &ndash; including human interaction and technical negligence &ndash;, and what measurements were ignored or newly established as a consequence, with [shisa kanko](https://en.wikipedia.org/wiki/Pointing_and_calling) being an impressive yet a very simple one.
 * _All input is evil_ &ndash; No exception. Everywhere. Always assume that beyond the border of your software unit, every input is about stealing your computational resources or taking you down, about setting up intrusion vectors, about circumventing access rules. More on security later, but this is security rule #1 to always have in mind.
 * [Principles of chaos engineering](https://principlesofchaos.org/): Become the Murphy. Instead of _solely_ spending work on _doing it right_, make every _what if..._ question an action. Your disks will eventually fail, your security lines will eventually break, somebody will trip over an important network cable. Instead of hoping for the best in this case, try it out, test your low-hanging countermeasures, evaluate them, improve them, repeat. AWS even does so called _people attacks_: _What if Neuralgic-Joe gets hit by a bus?_ (This is simulated by ordering Joe to stay at home for a day or another).
@@ -947,3 +947,93 @@ As a software engineer, you will have to pick fitting tools and libraries, and t
    * Its obedience is enforced by all kinds of digital rights management (DRM) tools.
    * It is OK when you have something running on your personal computer, but [it is bad when it enters the guest Wifi of a corporation](https://www.linkedin.com/pulse/being-radicalized-oracle-license-drone-martin-zetterlund).
    * ... (insert the absurdest things to think of that actually drive people towards OSS as far as they need to do serious work) ...
+
+## Sales
+
+_Excuse me? I thought we're at IT._ Chances are good that you will eventually, or again, by-sit a pitch, a sales talk, a brainstorming or workshop with someone willing to pay money for something _you_ are able to build or already have at hand. Let's try to make something out of it, and have some (more) food at the end of the month.
+
+There are roughly two sides to approach _Sales_:
+
+* Top-down: You are given something, and you have to sell it. You need to learn how to profitably sell ice in the Arctic, even to your family, without feeling bad about it.
+* Bottom-up: You build something and and want to (need to &ndash; let's stick to reality) sell it. You know how to make ice in the desert, and you would like to know of how much to ask for it and if that justifies your effort.
+
+The bottom-up approach is something than can be accessed easily even when you are not a sales person by any means. What follows is some key-takeaways from a book called [The Mom Test](https://www.momtestbook.com/).
+
+### The Setting
+
+You are a tech-related person or somebody responsible in IT. You have an idea, you are in a startup company, or you try to bring some loose strings together &ndash; predominantly B2B. You want to know two things now: _Is somebody worth the time?_ and _How much is it worth?_
+
+We are not going the cover _cold calls_ since that's another topic (though mildly covered by this book), and _sales execution_ here since that will likely require additional legal work and signatures.
+
+### The Questions
+
+When asking questions towards a (potential) customer, do not ask what may give you a false positive for whatever reason. Ask questions that are hard to answer wrongly.
+
+Bad examples are questions that pre-bias the answer, or that summon answers that are given for politeness, high degrees of abstraction and utopia and _Who wouldn't say Yes here?_:
+
+* _You surely do/have/use ..., do you? Don't you think that ...?_
+* _Wouldn't you like to have something that ...?_
+* _We have this ... and that ... don't yout think that's great for you?_
+* _What about ... wouldn't it a be a good idea to ...?_
+* _How much would you pay for something that ...?_
+
+Instead, let us try to harvest the truth:
+
+* _Have you ever dealt with ...?_
+* If yes: _What do you do/have right now?_ &ndash; Tools, services, people, ...?
+* If yes: _What's your status quo here? Does that cover all your needs?_ &ndash; We are looking for signs of need, happiness or pain.
+* If yes: _Did you ever look at alternatives? Which ones?_ &ndash; Willingness to try out something else?
+* If no: _What did you try in the past? Why no longer?_ &ndash; Identifying things to address.
+* _Is there any plan to introduce/change ... for this?_
+* If yes: _What's the background behind this choice?_ &ndash; We are looking for things we cannot fight, like legal requirements, company mergers, ...
+* _Who is requesting budget for this? Who is granting? How? When?_ &ndash; Can this person enter some commitment? How much? How much money is around?
+* _If you face ... what are you doing then?_ &ndash; Is there a solution/handling, and is it feasible to attack? Is this a problem at all?
+* _Can you demonstrate this?_, _How often does this occur?_ &ndash; Trying to get away from generalizations and distant memory.
+* _So how much time does this take?_, _Who is involved?_ &ndash; This may give numbers for financial extrapolation.
+* _Given there was some solution, how will this bring you closer to what?_ &ndash; Company goal vs. individual pain-point?
+* _Is there somebody else who needs to be addressed here?_ &ndash; Is there somebody else who needs to like us? To give us more information?
+* _Are there any other questions that need to asked?_ &ndash; Trying to identify what has been missed _by them_ so far.
+
+The nice thing about this list: It's questions &ndash; no chatting, no theater, no suffering during lunch. We should have extracted business insights and can estimate the value of our solution a little better.
+
+Also, try not to stop extraction after receiving compliements, and also always try to dig through statements of generalizations, the distant future or hypothetical statements.
+
+Depending on the people, the answers, and the maturity of what you have, there may be just a narrow and brief moment &ndash; during a meeting! So have all involved people tuned &ndash; for the decision of how to proceed after all these questions:
+
+* Is this something that is worth any more time at all? Is this someone from out target group? Any red flags?
+* Is there something to show or to offer now or very soon? Does this match anything we came up with?
+* If yes so far: Can we ask for any kind of commitment? See below.
+
+If the person of interest turns around and comes up with ideas, also try to get something out of it (you are taking notes the whole time, do you?):
+
+* _Why do you come up with this idea in particular?_
+* _How does this help you?_
+* _What problem will grow if you don't have that solution?_
+* _Is this something you need from the very beginning?_ &ndash; Beware of the feature-creep! We want to know how much is enough to _buy_ it.
+
+Let's say that somebody wants to connect Excel to that™: Is it a good idea to actually connect Excel to that, or to better think of something that can throw Excel away for good, given an understanding of the motions in play? Also, think of the amount of Excedrin you are about to need.
+
+### The Follow-Ups
+
+Idea: No meeting without commitment. Otherwise, focus elsewhere.
+
+We'd like to see a commitment &ndash; a move towards us by the other party &ndash; or an advancement that will bring us closer to sale, or valuable insights at minimum that help us adjust. Signs of a commitment include:
+
+* A follow-up meeting: discussing next steps, involving more people,
+* a sign-up: committing to use a demo or trial, to board more people,
+* a written agreement on helping in a case study or a promotion campaign,
+* a project calculation.
+
+In contrast, red flags include:
+
+* No commitment, maybe just a compliment,
+* they want to call back when the times are appropriate,
+* they want to be notified when there is something to see.
+
+These are polite ways of saying _No_ or _Not now and probably never_ or _I'm not gonna pay for this_.
+
+So how does somebody from IT help sitting next to the sales people:
+
+* Gathering business insights, understanding the idea behind functional requirements,
+* estimating the problem and solution space, and estimating how much it takes to tackle it vs. what it's worth,
+* questioning the pre-work on individual customers given the degree of business priority and commitment.
