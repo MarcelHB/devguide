@@ -259,8 +259,10 @@ A list of other real-world examples that look somewhat easy at a first glance, b
 
 * Doing CSV is [hard](http://thomasburette.com/blog/2014/05/25/so-you-want-to-write-your-own-CSV-code/),
 * doing JSON is [hard](http://seriot.ch/parsing_json.php),
-* doing HTTP cookies is [hard](https://tools.ietf.org/html/rfc2109) and got [even harder](https://tools.ietf.org/html/rfc6265) (with updates pending) and
-* doing IP address parsing is [hard](https://blog.dave.tf/post/ip-addr-parsing/).
+* doing HTTP cookies is [hard](https://tools.ietf.org/html/rfc2109) and got [even harder](https://tools.ietf.org/html/rfc6265) (with updates pending),
+* doing IP address parsing is [hard](https://blog.dave.tf/post/ip-addr-parsing/),
+* doing emojis is [hard](https://www.unicode.org/reports/tr51/) and
+* doing language identifiers is also [more than you'd wish for](https://www.rfc-editor.org/rfc/rfc5646.html).
 
 For reasons of compatibility, performance and security &ndash; this cannot be stressed enough &ndash; always look for established solutions first. I had considered _doing XML is hard_ to be obvious for all my developer life, but even that did not stop a surprising amount of people from considering and even trying it on their own &ndash; and not as a private side-project.
 
