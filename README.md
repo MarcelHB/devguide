@@ -284,6 +284,9 @@ Without input and output operations, there was only little practical software. T
 * Remember: the slower the I/O channel, the bigger the advantage of a CPU compressing and decompressing data. This is [why we use compression](https://www.pingdom.com/blog/can-gzip-compression-really-improve-web-performance/) in HTTP servers, also for dynamic responses.
 * Close all the handles when done, and mind the exceptions or error cases. Handles usually represent operating system allocations that are otherwise exhausted eventually while the process continues running.
 * On some systems, it is easy to test _no space left on device_ behavior as they expose a dummy device for this purpose. On Linux, there is not only `/dev/null` for redirecting data into the void, there is also `/dev/full` to simulate a disk without space.
+* Some operating systems consider file paths case-insensitive (Windows), some do not. So `myfile.dat` in your code may be `MyFile.dat` here on the disk but not there. In order to avoid dealing with mismatches between hardcoded paths
+  and actual file names that are part of some distribution, keep the names consistent. Emulating Windows-style file addressing isn't fun any more when you need to think of how to turn an `Ä` into an `ä` without hardcoding either
+  case.
 
 ### Streaming
 
